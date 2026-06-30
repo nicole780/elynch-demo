@@ -1727,11 +1727,11 @@ body { align-items: flex-start; }
       <div class="remote-link">
         <div>
           <div style="font-size:11px;color:var(--gray-500);">Remote signing link</div>
-          <div class="remote-link-url" style="cursor:pointer;" onclick="window.open('sign.html','_blank')">elynch.app/sign/DW-2348</div>
+          <div class="remote-link-url" style="cursor:pointer;" onclick="goPage('sign')">elynch-demo-production.up.railway.app/app.html#sign</div>
         </div>
         <div style="display:flex;gap:8px;">
           <button class="btn btn-outline" style="width:auto;padding:8px 12px;font-size:12px;" id="copy-btn" onclick="copyLink()">Copy</button>
-          <button class="btn btn-primary" style="width:auto;padding:8px 12px;font-size:12px;" onclick="window.open('sign.html','_blank')">Preview</button>
+          <button class="btn btn-primary" style="width:auto;padding:8px 12px;font-size:12px;" onclick="goPage('sign')">Preview</button>
         </div>
       </div>
       <div style="padding: 0 20px;">
@@ -2324,7 +2324,7 @@ body { align-items: flex-start; }
         <rect x="3" y="11" width="18" height="11" rx="2"/>
         <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
       </svg>
-      <span class="url-text">elynch.app/sign/DW-2348</span>
+      <span class="url-text">elynch-demo-production.up.railway.app/app.html#sign</span>
     </div>
   </div>
 
@@ -2557,7 +2557,7 @@ function dwInitSigPad() {
 function dwClearSig() { if (dwCtx) dwCtx.clearRect(0, 0, 350, 140); }
 
 function copyLink() {
-  const link = window.location.origin + window.location.pathname.replace('dayworks.html','') + 'sign.html';
+  const link = 'https://elynch-demo-production.up.railway.app/app.html#sign';
   if (navigator.clipboard) {
     navigator.clipboard.writeText(link).then(() => {
       const btn = document.getElementById('copy-btn');
@@ -2573,13 +2573,13 @@ function copyLink() {
 }
 
 function shareWhatsApp() {
-  const link = window.location.origin + window.location.pathname.replace('dayworks.html','') + 'sign.html';
+  const link = 'https://elynch-demo-production.up.railway.app/app.html#sign';
   const msg = encodeURIComponent('Hi, please find the daywork docket DW-2348 for your approval.\n\nSign here: ' + link + '\n\nE. Lynch & Sons Civils');
   window.open('https://wa.me/?text=' + msg, '_blank');
 }
 
 function shareEmail() {
-  const link = window.location.origin + window.location.pathname.replace('dayworks.html','') + 'sign.html';
+  const link = 'https://elynch-demo-production.up.railway.app/app.html#sign';
   const subject = encodeURIComponent('Daywork Docket DW-2348 — E. Lynch & Sons Civils');
   const body = encodeURIComponent('Hi,\n\nPlease find daywork docket DW-2348 for your review and approval.\n\nSign here: ' + link + '\n\nKind regards,\nJohn Murphy\nE. Lynch & Sons Civils');
   window.location.href = 'mailto:?subject=' + subject + '&body=' + body;

@@ -2496,6 +2496,12 @@ function goPage(name) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// Hash-based routing — allows direct links like app.html#sign
+window.addEventListener('DOMContentLoaded', function() {
+  const hash = window.location.hash.replace('#', '');
+  if (hash && document.getElementById('page-' + hash)) goPage(hash);
+});
+
 
 function chkUpdateProgress() {
   const checkboxes = document.querySelectorAll('.toggle input[type=checkbox]');

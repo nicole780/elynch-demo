@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E. Lynch & Sons — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:#1a2e7c;--brand-mid:#2541b2;--brand-light:#3a56d4;
+  --green:#22c55e;--green-dk:#16a34a;--red:#ef4444;--red-dk:#dc2626;
+  --amber:#f59e0b;--amber-dk:#d97706;--purple:#7c3aed;--orange:#ea580c;
+  --w:#fff;--g50:#f8fafc;--g100:#f1f5f9;--g200:#e2e8f0;--g300:#cbd5e1;
+  --g400:#94a3b8;--g500:#64748b;--g600:#475569;--g700:#334155;--g900:#0f172a;
+  --sw:228px;
+}
+body{font-family:'Inter',sans-serif;background:var(--g100);min-height:100vh;display:flex;font-size:13px}
+
+/* ── SIDEBAR ── */
+.sb{width:var(--sw);background:var(--brand);min-height:100vh;display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sb::-webkit-scrollbar{width:3px}.sb::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2)}
+.sb-logo{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sb-logo-t{font-size:15px;font-weight:900;color:#fff;font-style:italic;line-height:1.1}
+.sb-logo-s{font-size:9px;font-weight:700;letter-spacing:.1em;color:rgba(255,255,255,.45);text-transform:uppercase;margin-top:2px}
+.sb-sec{padding:10px 0 2px}
+.sb-sec-lbl{padding:0 14px 5px;font-size:9px;font-weight:700;letter-spacing:.1em;color:rgba(255,255,255,.3);text-transform:uppercase}
+.nl{display:flex;align-items:center;gap:9px;padding:7px 14px;color:rgba(255,255,255,.65);font-size:12px;font-weight:500;cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:inherit;transition:all .12s;border-radius:0}
+.nl:hover{color:#fff;background:rgba(255,255,255,.07)}
+.nl.active{color:#fff;background:rgba(255,255,255,.14);font-weight:700}
+.nl svg{width:15px;height:15px;flex-shrink:0}
+.nl-sub{padding-left:38px;font-size:11px}
+.sb-bot{margin-top:auto;padding:10px 12px;border-top:1px solid rgba(255,255,255,.1)}
+.sb-bot-link{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.55);font-size:12px;text-decoration:none;padding:7px 4px;cursor:pointer;border:none;background:none;width:100%;font-family:inherit}
+.sb-bot-link:hover{color:#fff}
+.sb-bot-link svg{width:15px;height:15px}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-x:hidden;display:flex;flex-direction:column}
+
+/* ── TOP BAR ── */
+.topbar{background:#fff;border-bottom:1px solid var(--g200);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:20;flex-shrink:0}
+.top-tabs{display:flex;height:100%}
+.top-tab{padding:0 16px;font-size:12px;font-weight:600;color:var(--g500);border:none;background:none;cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;height:100%;display:flex;align-items:center;transition:all .12s}
+.top-tab:hover{color:var(--brand)}
+.top-tab.active{color:var(--brand);border-bottom-color:var(--brand);font-weight:700}
+.top-right{display:flex;align-items:center;gap:10px}
+.icon-btn{background:none;border:none;cursor:pointer;color:var(--g500);padding:6px;border-radius:6px;display:flex;align-items:center;position:relative}
+.icon-btn:hover{background:var(--g100);color:var(--brand)}
+.notif-dot{position:absolute;top:4px;right:4px;width:7px;height:7px;background:var(--amber);border-radius:50%;border:1.5px solid #fff}
+.avatar{width:32px;height:32px;background:var(--brand);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:800;cursor:pointer;border:none;font-family:inherit}
+
+/* ── CONTENT AREA ── */
+.content{flex:1;overflow-y:auto}
+.content::-webkit-scrollbar{width:5px}.content::-webkit-scrollbar-thumb{background:var(--g300);border-radius:3px}
+.page{display:none;padding:24px 24px 32px;animation:fadein .15s ease}
+.page.active{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── GREETING ── */
+.greet-bar{background:var(--brand);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.greet-title{font-size:18px;font-weight:800;color:#fff}
+.greet-sub{font-size:12px;color:rgba(255,255,255,.65);margin-top:3px}
+.weather{background:rgba(255,255,255,.13);border-radius:8px;padding:7px 12px;color:#fff;font-size:12px;font-weight:600}
+
+/* ── STAT CARDS ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+.stat-card{border-radius:12px;padding:18px 20px;color:#fff;cursor:pointer;transition:opacity .15s;display:flex;align-items:center;justify-content:space-between}
+.stat-card:hover{opacity:.9}
+.stat-val{font-size:32px;font-weight:900;line-height:1;margin-top:3px}
+.stat-lbl{font-size:11px;font-weight:600;opacity:.82}
+.stat-ico{opacity:.35}
+.stat-ico svg{width:36px;height:36px}
+
+/* ── SHORTCUT ROW ── */
+.sc-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+.sc-card{border-radius:12px;padding:16px 18px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;color:#fff;transition:opacity .15s}
+.sc-card:hover{opacity:.9}
+.sc-lbl{font-size:13px;font-weight:700}
+.sc-val{font-size:26px;font-weight:900}
+
+/* ── PANELS ── */
+.panels-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.panels-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.panel{background:#fff;border-radius:12px;border:1px solid var(--g200);overflow:hidden}
+.ph{padding:12px 16px;border-bottom:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between}
+.ph-title{font-size:13px;font-weight:700;color:var(--g900)}
+.ph-actions{display:flex;gap:6px;align-items:center}
+.ph-link{font-size:11px;font-weight:600;color:var(--brand-mid);text-decoration:none;cursor:pointer;border:none;background:none;font-family:inherit}
+.ph-link:hover{text-decoration:underline}
+.ph-btn{font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;border:none;cursor:pointer;font-family:inherit;background:var(--brand);color:#fff}
+.ph-btn:hover{opacity:.88}
+.ph-btn-outline{background:#fff;color:var(--brand);border:1px solid var(--brand-mid)}
+
+/* ── TABLES ── */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--g400);text-transform:uppercase;padding:9px 14px;text-align:left;background:var(--g50);border-bottom:1px solid var(--g200)}
+.tbl td{font-size:12px;color:var(--g700);padding:9px 14px;border-top:1px solid var(--g100)}
+.tbl tr:hover td{background:var(--g50)}
+.tbl .name{font-weight:700;color:var(--g900)}
+.tbl .link{color:var(--brand-mid);font-weight:700;cursor:pointer}
+.tbl .link:hover{text-decoration:underline}
+.act-btn{width:26px;height:26px;background:var(--g100);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;border:none;font-size:12px;margin:0 1px;transition:all .12s}
+.act-btn:hover{background:var(--brand);color:#fff}
+.act-btn.danger:hover{background:var(--red);color:#fff}
+.act-btn svg{width:13px;height:13px}
+
+/* ── BADGES ── */
+.bdg{display:inline-flex;align-items:center;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap}
+.bdg.wrap{white-space:normal;text-align:left;line-height:1.4}
+.bdg-grn{background:#dcfce7;color:#16a34a}
+.bdg-amb{background:#fef3c7;color:#d97706}
+.bdg-red{background:#fee2e2;color:#dc2626}
+.bdg-blu{background:#dbeafe;color:#1d4ed8}
+.bdg-pur{background:#ede9fe;color:#6d28d9}
+.bdg-gry{background:var(--g100);color:var(--g600)}
+
+/* ── PAGE HEADER ── */
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.page-title{font-size:20px;font-weight:800;color:var(--g900)}
+.page-sub{font-size:12px;color:var(--g500);margin-top:3px}
+.add-btn{background:var(--brand);color:#fff;border:none;padding:9px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;transition:opacity .15s}
+.add-btn:hover{opacity:.88}
+
+/* ── SEARCH BAR ── */
+.search-bar{display:flex;gap:10px;margin-bottom:16px}
+.search-input{flex:1;padding:8px 12px 8px 34px;background:#fff;border:1px solid var(--g200);border-radius:8px;font-size:12px;font-family:inherit;color:var(--g700);outline:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:10px center}
+.search-input:focus{border-color:var(--brand-mid)}
+.filter-sel{padding:8px 28px 8px 10px;background:#fff;border:1px solid var(--g200);border-radius:8px;font-size:12px;font-family:inherit;color:var(--g700);outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+
+/* ── FORM IN PANEL ── */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px}
+.form-group label{display:block;font-size:10px;font-weight:700;letter-spacing:.04em;color:var(--g500);text-transform:uppercase;margin-bottom:5px}
+.form-control{width:100%;padding:8px 10px;background:var(--g50);border:1px solid var(--g200);border-radius:7px;font-size:12px;font-family:inherit;color:var(--g700);outline:none}
+.form-control:focus{border-color:var(--brand-mid);background:#fff}
+textarea.form-control{resize:vertical;min-height:64px}
+
+/* ── MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;padding:20px}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal::-webkit-scrollbar{width:4px}.modal::-webkit-scrollbar-thumb{background:var(--g300);border-radius:2px}
+.modal-head{padding:18px 20px 14px;border-bottom:1px solid var(--g200);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:1}
+.modal-title{font-size:16px;font-weight:800;color:var(--g900)}
+.modal-close{background:var(--g100);border:none;border-radius:6px;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--g500);font-family:inherit}
+.modal-close:hover{background:var(--g200)}
+.modal-body{padding:20px}
+.modal-foot{padding:14px 20px;border-top:1px solid var(--g200);display:flex;gap:10px;justify-content:flex-end}
+.btn-primary{background:var(--brand);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s}
+.btn-primary:hover{opacity:.88}
+.btn-danger{background:var(--red);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-cancel{background:#fff;color:var(--g600);border:1px solid var(--g200);padding:9px 18px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-cancel:hover{background:var(--g50)}
+
+/* ── CONFIRM MODAL ── */
+.confirm-icon{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:22px}
+.confirm-icon.danger{background:#fee2e2}
+.confirm-title{font-size:16px;font-weight:800;color:var(--g900);text-align:center;margin-bottom:6px}
+.confirm-sub{font-size:13px;color:var(--g500);text-align:center;line-height:1.5}
+
+/* ── ACTIVITY ── */
+.act-row{padding:10px 14px;border-top:1px solid var(--g100);display:flex;align-items:flex-start;gap:9px;font-size:11px;color:var(--g600)}
+.act-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px}
+
+/* ── REPORTS SECTION ── */
+.report-card{background:#fff;border:1px solid var(--g200);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:10px}
+.report-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px}
+.report-title{font-size:13px;font-weight:700;color:var(--g900)}
+.report-sub{font-size:11px;color:var(--g500);margin-top:2px}
+.dl-btn{background:var(--brand);color:#fff;border:none;padding:7px 14px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px;flex-shrink:0;transition:opacity .15s}
+.dl-btn:hover{opacity:.88}
+.dl-btn svg{width:13px;height:13px}
+
+/* ── HOLIDAYS ── */
+.hol-row{padding:10px 14px;border-top:1px solid var(--g100);display:flex;align-items:center;justify-content:space-between}
+.hol-name{font-size:12px;font-weight:700;color:var(--g900)}
+.hol-sub{font-size:11px;color:var(--g500)}
+.hol-acts{display:flex;gap:5px}
+.hol-ok{background:#dcfce7;color:#16a34a;border:none;border-radius:5px;width:24px;height:24px;cursor:pointer;font-size:12px;font-weight:700}
+.hol-no{background:#fee2e2;color:#dc2626;border:none;border-radius:5px;width:24px;height:24px;cursor:pointer;font-size:12px;font-weight:700}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--g900);color:#fff;padding:11px 18px;border-radius:10px;font-size:12px;font-weight:600;z-index:200;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* ── INLINE EDITABLE TAG ── */
+.tag-grn{background:#dcfce7;color:#16a34a;padding:2px 7px;border-radius:6px;font-size:10px;font-weight:700}
+.tag-red{background:#fee2e2;color:#dc2626;padding:2px 7px;border-radius:6px;font-size:10px;font-weight:700}
+
+/* ── DETAIL PANEL CARD ── */
+.detail-kv{display:flex;padding:8px 0;border-bottom:1px solid var(--g100);font-size:12px}
+.detail-kv:last-child{border-bottom:none}
+.dk{color:var(--g500);width:130px;flex-shrink:0}
+.dv{color:var(--g900);font-weight:600;flex:1}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sb">
+  <div class="sb-logo">
+    <div class="sb-logo-t">E. LYNCH<br>&amp; SONS</div>
+    <div class="sb-logo-s">Civils — Admin</div>
+  </div>
+  <nav style="flex:1;padding:8px 0">
+    <div class="sb-sec">
+      <button class="nl active" id="nl-dashboard" onclick="nav('dashboard')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </button>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-sec-lbl">People</div>
+      <button class="nl" id="nl-employees" onclick="nav('employees')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 20c0-4 3.6-7 8-7"/><circle cx="17" cy="11" r="3"/><path d="M14 20c0-2.5 1.5-4 4-4s4 1.5 4 4"/></svg>
+        Employees
+      </button>
+      <button class="nl nl-sub" id="nl-clients" onclick="nav('clients')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/><path d="M12 12v4"/><path d="M9 14h6"/></svg>
+        Clients
+      </button>
+      <button class="nl nl-sub" id="nl-holidays" onclick="nav('holidays')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Holiday Requests
+      </button>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-sec-lbl">Plant</div>
+      <button class="nl" id="nl-machines" onclick="nav('machines')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        Plant Machinery
+      </button>
+      <button class="nl nl-sub" id="nl-checklists" onclick="nav('checklists')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12l3 3 5-5"/></svg>
+        GA2 Checklists
+      </button>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-sec-lbl">Operations</div>
+      <button class="nl" id="nl-sites" onclick="nav('sites')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        Sites
+      </button>
+      <button class="nl" id="nl-dayworks" onclick="nav('dayworks')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Dayworks
+      </button>
+      <button class="nl" id="nl-timesheets" onclick="nav('timesheets')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Timesheets
+      </button>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-sec-lbl">Safety</div>
+      <button class="nl" id="nl-hs" onclick="nav('hs')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Health &amp; Safety
+      </button>
+      <button class="nl nl-sub" id="nl-rams" onclick="nav('rams')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/></svg>
+        RAMS
+      </button>
+      <button class="nl nl-sub" id="nl-toolbox" onclick="nav('toolbox')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Toolbox Talks
+      </button>
+      <button class="nl nl-sub" id="nl-incidents" onclick="nav('incidents')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+        Incident Reports
+      </button>
+    </div>
+    <div class="sb-sec">
+      <div class="sb-sec-lbl">Reports</div>
+      <button class="nl" id="nl-reports" onclick="nav('reports')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Reports &amp; Exports
+      </button>
+    </div>
+  </nav>
+  <div class="sb-bot">
+    <button class="sb-bot-link nl" onclick="nav('settings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </button>
+    <a href="index.html" class="sb-bot-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Logout
+    </a>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="top-tabs">
+      <button class="top-tab active" onclick="nav('dashboard')">Dashboard</button>
+      <button class="top-tab" onclick="nav('timesheets')">Timesheets</button>
+      <button class="top-tab" onclick="nav('machines')">Plant Equipment</button>
+      <button class="top-tab" onclick="nav('holidays')">Holidays</button>
+      <button class="top-tab" onclick="nav('dayworks')">Dayworks</button>
+      <button class="top-tab" onclick="nav('reports')">Reports</button>
+    </div>
+    <div class="top-right">
+      <button class="icon-btn" onclick="toast('No new notifications')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <div class="notif-dot"></div>
+      </button>
+      <button class="avatar" onclick="nav('settings')">AD</button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ══ GREETING ══ -->
+    <div class="greet-bar" id="greet-bar">
+      <div>
+        <div class="greet-title">Good Afternoon, Admin</div>
+        <div class="greet-sub">Saturday, June 20, 2026 at 3:05 PM</div>
+      </div>
+      <div class="weather">☀️ Clear 16°C &nbsp;·&nbsp; Mullingar</div>
+    </div>
+
+    <!-- ══ PAGE: DASHBOARD ══ -->
+    <div class="page active" id="page-dashboard" style="padding-top:20px">
+      <div class="stats-row">
+        <div class="stat-card" style="background:linear-gradient(135deg,#2541b2,#3a56d4)" onclick="nav('employees')">
+          <div><div class="stat-lbl">Staffing</div><div class="stat-val">17</div></div>
+          <div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><circle cx="9" cy="7" r="4"/><path d="M3 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+        </div>
+        <div class="stat-card" style="background:linear-gradient(135deg,#15803d,#22c55e)" onclick="nav('machines')">
+          <div><div class="stat-lbl">Plant Equipment</div><div class="stat-val">25</div></div>
+          <div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
+        </div>
+        <div class="stat-card" style="background:linear-gradient(135deg,#6d28d9,#7c3aed)" onclick="nav('clients')">
+          <div><div class="stat-lbl">Clients</div><div class="stat-val">12</div></div>
+          <div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg></div>
+        </div>
+        <div class="stat-card" style="background:linear-gradient(135deg,#c2410c,#ea580c)" onclick="nav('sites')">
+          <div><div class="stat-lbl">Active Sites</div><div class="stat-val">4</div></div>
+          <div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+        </div>
+      </div>
+      <div class="sc-row">
+        <div class="sc-card" style="background:linear-gradient(135deg,#15803d,#22c55e)" onclick="nav('hs')"><div><div class="sc-lbl">Health &amp; Safety</div><div class="sc-val">2</div></div><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div class="sc-card" style="background:linear-gradient(135deg,#6d28d9,#8b5cf6)" onclick="nav('dayworks')"><div><div class="sc-lbl">Dayworks</div><div class="sc-val">8</div></div><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <div class="sc-card" style="background:linear-gradient(135deg,#1d4ed8,#3b82f6)" onclick="toast('Messenger coming soon')"><div><div class="sc-lbl">Messenger</div><div class="sc-val">0</div></div><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <div class="sc-card" style="background:linear-gradient(135deg,#b91c1c,#ef4444)" onclick="nav('incidents')"><div><div class="sc-lbl">Defects / Issues</div><div class="sc-val">107</div></div><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
+      </div>
+      <div class="panels-2">
+        <!-- Timesheets panel -->
+        <div class="panel">
+          <div class="ph"><div class="ph-title">⏱ Timesheets — Pending Approval</div><button class="ph-link" onclick="nav('timesheets')">View all →</button></div>
+          <table class="tbl">
+            <tr><th>Employee</th><th>Role</th><th>Site</th><th>Hours</th><th>Status</th><th>Action</th></tr>
+            <tr><td class="name">Tom Kelly</td><td>Site Foreman</td><td>ESB Mullingar</td><td>45h</td><td><span class="bdg bdg-amb">Pending</span></td><td><button class="act-btn" onclick="approveTs(this)" title="Approve">✓</button><button class="act-btn" onclick="toast('Timesheet flagged')" title="Flag">⚑</button><button class="act-btn" onclick="toast('Opening full timesheet view...')" title="View">👁</button></td></tr>
+            <tr><td class="name">Mick Walsh</td><td>Crane Operator</td><td>ESB Mullingar</td><td>44h</td><td><span class="bdg bdg-amb">Pending</span></td><td><button class="act-btn" onclick="approveTs(this)" title="Approve">✓</button><button class="act-btn" onclick="toast('Timesheet flagged')" title="Flag">⚑</button><button class="act-btn" onclick="toast('Opening full timesheet view...')" title="View">👁</button></td></tr>
+            <tr><td class="name">Pat Doyle</td><td>Labourer</td><td>ESB Mullingar</td><td>32h</td><td><span class="bdg bdg-red">Flagged</span></td><td><button class="act-btn" onclick="approveTs(this)" title="Approve">✓</button><button class="act-btn" onclick="toast('Opening full timesheet view...')" title="View">👁</button></td></tr>
+            <tr><td class="name">John Murphy</td><td>Excavator Op.</td><td>ESB Mullingar</td><td>40h</td><td><span class="bdg bdg-grn">Approved</span></td><td><button class="act-btn" onclick="toast('Opening full timesheet view...')" title="View">👁</button></td></tr>
+            <tr><td class="name">Sean Byrne</td><td>Plant Operator</td><td>ESB Mullingar</td><td>32h</td><td><span class="bdg bdg-grn">Approved</span></td><td><button class="act-btn" onclick="toast('Opening full timesheet view...')" title="View">👁</button></td></tr>
+            <tr><td class="name">Declan Ryan</td><td>Machine Op.</td><td>ESB Mullingar</td><td>40h</td><td><span class="bdg bdg-grn">Approved</span></td><td><button class="act-btn" onclick="toast('Opening full timesheet view...')" title="View">👁</button></td></tr>
+          </table>
+        </div>
+        <!-- Dayworks panel -->
+        <div class="panel">
+          <div class="ph"><div class="ph-title">📄 Dayworks</div><button class="ph-btn" onclick="openModal('modal-add-dw')">+ New Daywork</button></div>
+          <table class="tbl">
+            <tr><th>Docket</th><th>Client</th><th>Site</th><th>Hrs</th><th>Status</th><th>Action</th></tr>
+            <tr><td class="link" onclick="viewDaywork('DW-2345')">DW-2345</td><td>ESB Networks</td><td>Mullingar</td><td>10h</td><td><span class="bdg bdg-grn">Signed</span></td><td><button class="act-btn" onclick="downloadDW('DW-2345')" title="Download PDF">⬇</button><button class="act-btn" onclick="viewDaywork('DW-2345')" title="View">👁</button></td></tr>
+            <tr><td class="link" onclick="viewDaywork('DW-2346')">DW-2346</td><td>TII</td><td>M6 Athlone</td><td>9h</td><td><span class="bdg bdg-amb">Awaiting</span></td><td><button class="act-btn" onclick="copySignLink('DW-2346')" title="Copy signing link">🔗</button><button class="act-btn" onclick="viewDaywork('DW-2346')" title="View">👁</button></td></tr>
+            <tr><td class="link" onclick="viewDaywork('DW-2347')">DW-2347</td><td>Kildare CC</td><td>Kinnegad</td><td>8h</td><td><span class="bdg bdg-amb">Awaiting</span></td><td><button class="act-btn" onclick="copySignLink('DW-2346')" title="Copy signing link">🔗</button><button class="act-btn" onclick="viewDaywork('DW-2347')" title="View">👁</button></td></tr>
+            <tr><td class="link" onclick="viewDaywork('DW-2340')">DW-2340</td><td>ESB Networks</td><td>Longford</td><td>10h</td><td><span class="bdg bdg-grn">Signed</span></td><td><button class="act-btn" onclick="downloadDW('DW-2340')" title="Download PDF">⬇</button><button class="act-btn" onclick="viewDaywork('DW-2340')" title="View">👁</button></td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="panels-3">
+        <!-- Equipment -->
+        <div class="panel">
+          <div class="ph"><div class="ph-title">🏗 Plant — GA1 Status</div><button class="ph-link" onclick="nav('machines')">Manage →</button></div>
+          <div id="dash-equip">
+            <div class="hol-row"><div><div style="font-size:12px;font-weight:700">CAT 320 Excavator</div><div style="font-size:10px;color:var(--g400)">Exp 12 Mar 2026</div></div><span class="bdg bdg-grn">Active</span></div>
+            <div class="hol-row"><div><div style="font-size:12px;font-weight:700">Komatsu PC210</div><div style="font-size:10px;color:var(--g400)">Exp 20 May 2026</div></div><span class="bdg bdg-grn">Active</span></div>
+            <div class="hol-row"><div><div style="font-size:12px;font-weight:700">CAT 308 Mini</div><div style="font-size:10px;color:var(--red);font-weight:700">EXPIRED 01 Nov 2025</div></div><span class="bdg bdg-red">Overdue</span></div>
+            <div class="hol-row"><div><div style="font-size:12px;font-weight:700">Volvo EC300</div><div style="font-size:10px;color:var(--red);font-weight:700">EXPIRED 15 Jan 2025</div></div><span class="bdg bdg-red">Overdue</span></div>
+            <div class="hol-row"><div><div style="font-size:12px;font-weight:700">Liebherr LTM 1060</div><div style="font-size:10px;color:var(--g400)">Exp 01 Jun 2026</div></div><span class="bdg bdg-grn">Active</span></div>
+          </div>
+        </div>
+        <!-- Holidays -->
+        <div class="panel">
+          <div class="ph"><div class="ph-title">📅 Holiday Requests</div><button class="ph-link" onclick="nav('holidays')">View all →</button></div>
+          <div class="hol-row"><div><div class="hol-name">John Murphy</div><div class="hol-sub">10–17 Jun · 6 days</div></div><span class="bdg bdg-grn">Approved</span></div>
+          <div class="hol-row" id="hol-sean"><div><div class="hol-name">Sean Byrne</div><div class="hol-sub">24–28 Jun · 3 days</div></div><div style="display:flex;align-items:center;gap:6px"><span class="bdg bdg-amb">Pending</span><div class="hol-acts"><button class="hol-ok" onclick="approveHol('hol-sean')">✓</button><button class="hol-no" onclick="declineHol('hol-sean')">✕</button></div></div></div>
+          <div class="hol-row"><div><div class="hol-name">Tom Kelly</div><div class="hol-sub">3–5 Mar · 3 days</div></div><span class="bdg bdg-red">Declined</span></div>
+          <div style="background:var(--g50);padding:10px 14px;border-top:1px solid var(--g200)"><div style="font-size:10px;color:var(--g500)">Company-wide leave taken · 47 of 425 days (17 staff × 25 days)</div><div style="height:4px;background:var(--g200);border-radius:3px;overflow:hidden;margin-top:5px"><div style="height:100%;background:var(--brand-mid);width:11%"></div></div></div>
+        </div>
+        <!-- Activity -->
+        <div class="panel">
+          <div class="ph"><div class="ph-title">⚡ Recent Activity</div><button class="ph-link" onclick="toast('Full log opened')">Full log →</button></div>
+          <div class="act-row"><div class="act-dot" style="background:var(--green)"></div><div>John Murphy clocked in — ESB Substation<br><span style="color:var(--g400)">Today 07:02</span></div></div>
+          <div class="act-row"><div class="act-dot" style="background:var(--brand-mid)"></div><div>DW-2345 signed by ESB Networks<br><span style="color:var(--g400)">Yesterday 16:40</span></div></div>
+          <div class="act-row"><div class="act-dot" style="background:var(--amber)"></div><div>GA2 checklist submitted — CAT 320 EX-001<br><span style="color:var(--g400)">Yesterday 07:15</span></div></div>
+          <div class="act-row"><div class="act-dot" style="background:var(--red)"></div><div>Cert overdue — CAT 308 Mini Excavator<br><span style="color:var(--g400)">01 Nov 2025</span></div></div>
+          <div class="act-row"><div class="act-dot" style="background:var(--brand-mid)"></div><div>Holiday request — Sean Byrne 24–28 Jun<br><span style="color:var(--g400)">2 days ago</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: EMPLOYEES ══ -->
+    <div class="page" id="page-employees">
+      <div class="page-header">
+        <div><div class="page-title">Employees</div><div class="page-sub">17 employees across 4 sites</div></div>
+        <button class="add-btn" onclick="openModal('modal-emp')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Employee
+        </button>
+      </div>
+      <div class="search-bar">
+        <input class="search-input" placeholder="Search employees...">
+        <select class="filter-sel"><option>All Sites</option><option>ESB Mullingar</option><option>M6 Athlone</option><option>Kinnegad</option></select>
+        <select class="filter-sel"><option>All Roles</option><option>Excavator Operator</option><option>Plant Operator</option><option>Site Foreman</option><option>Labourer</option></select>
+      </div>
+      <div class="panel">
+        <table class="tbl">
+          <tr><th>Name</th><th>Role</th><th>Site</th><th>Status</th><th>PIN</th><th>Certs</th><th>Action</th></tr>
+          <tr><td class="name">John Murphy</td><td>Excavator Operator</td><td>ESB Mullingar</td><td><span class="bdg bdg-grn">Active</span></td><td>••••</td><td><span class="bdg bdg-grn">Valid</span></td><td><button class="act-btn" onclick="viewEmployee('John Murphy')" title="View">👁</button><button class="act-btn" onclick="editEmp('John Murphy')" title="Edit">✏</button><button class="act-btn danger" onclick="confirmDelete('employee','John Murphy',this)" title="Delete">🗑</button></td></tr>
+          <tr><td class="name">Sean Byrne</td><td>Plant Operator</td><td>ESB Mullingar</td><td><span class="bdg bdg-grn">Active</span></td><td>••••</td><td><span class="bdg bdg-grn">Valid</span></td><td><button class="act-btn" onclick="viewEmployee('Sean Byrne')" title="View">👁</button><button class="act-btn" onclick="editEmp('Sean Byrne')" title="Edit">✏</button><button class="act-btn danger" onclick="confirmDelete('employee','Sean Byrne',this)" title="Delete">🗑</button></td></tr>
+          <tr><td class="name">Tom Kelly</td><td>Site Foreman</td><td>ESB Mullingar</td><td><span class="bdg bdg-grn">Active</span></td><td>••••</td><td><span class="bdg bdg-grn">Valid</span></td><td><button class="act-btn" onclick="viewEmployee('Tom Kelly')" title="View">👁</button><button class="act-btn" onclick="editEmp('Tom Kelly')" title="Edit">✏</button><button class="act-btn danger" onclick="confirmDelete('employee','Tom Kelly',this)" title="Delete">🗑</button></td></tr>
+          <tr><td class="name">Pat Doyle</td><td>Labourer</td><td>ESB Mullingar</td><td><span class="bdg bdg-grn">Active</span></td><td>••••</td><td><span class="bdg bdg-amb">1 Due</span></td><td><button class="act-btn" onclick="viewEmployee('Pat Doyle')" title="View">👁</button><button class="act-btn" onclick="editEmp('Pat Doyle')" title="Edit">✏</button><button class="act-btn danger" onclick="confirmDelete('employee','Pat Doyle',this)" title="Delete">🗑</button></td></tr>
+          <tr><td class="name">Mick Walsh</td><td>Crane Operator</td><td>ESB Mullingar</td><td><span class="bdg bdg-grn">Active</span></td><td>••••</td><td><span class="bdg bdg-grn">Valid</span></td><td><button class="act-btn" onclick="viewEmployee('Mick Walsh')" title="View">👁</button><button class="act-btn" onclick="editEmp('Mick Walsh')" title="Edit">✏</button><button class="act-btn danger" onclick="confirmDelete('employee','Mick Walsh',this)" title="Delete">🗑</button></td></tr>
+          <tr><td class="name">Declan Ryan</td><td>Machine Operator</td><td>ESB Mullingar</td><td><span class="bdg bdg-grn">Active</span></td><td>••••</td><td><span class="bdg bdg-grn">Valid</span></td><td><button class="act-btn" onclick="viewEmployee('Declan Ryan')" title="View">👁</button><button class="act-btn" onclick="editEmp('Declan Ryan')" title="Edit">✏</button><button class="act-btn danger" onclick="confirmDelete('employee','Declan Ryan',this)" title="Delete">🗑</button></td></tr>
+          <tr><td class="name">Cian Flood</td><td>Labourer</td><td>M6 Athlone</td><td><span class="bdg bdg-grn">Active</span></td><td>••••</td><td><span class="bdg bdg-grn">Valid</span></td><td><button class="act-btn" onclick="viewEmployee('Cian Flood')" title="View">👁</button><button class="act-btn" onclick="editEmp('Cian Flood')" title="Edit">✏</button><button class="act-btn danger" onclick="confirmDelete('employee','Cian Flood',this)" title="Delete">🗑</button></td></tr>
+          <tr><td class="name">Brian Nolan</td><td>Plant Operator</td><td>Kinnegad</td><td><span class="bdg bdg-amb">On Leave</span></td><td>••••</td><td><span class="bdg bdg-grn">Valid</span></td><td><button class="act-btn" onclick="viewEmployee('Brian Nolan')" title="View">👁</button><button class="act-btn" onclick="editEmp('Brian Nolan')" title="Edit">✏</button><button class="act-btn danger" onclick="confirmDelete('employee','Brian Nolan',this)" title="Delete">🗑</button></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: CLIENTS ══ -->
+    <div class="page" id="page-clients">
+      <div class="page-header">
+        <div><div class="page-title">Clients</div><div class="page-sub">12 active clients</div></div>
+        <button class="add-btn" onclick="openModal('modal-client')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Client
+        </button>
+      </div>
+      <div class="search-bar"><input class="search-input" placeholder="Search clients..."></div>
+      <div class="panel">
+        <table class="tbl">
+          <tr><th>Client Name</th><th>Contact</th><th>Email</th><th>Phone</th><th>Dayworks</th><th>Status</th><th>Action</th></tr>
+          <tr><td class="name">ESB Networks</td><td>Mary Fahy</td><td>m.fahy@esb.ie</td><td>087 123 4567</td><td>4</td><td><span class="bdg bdg-grn">Active</span></td><td><button class="act-btn" onclick="viewClient('ESB Networks')" title="View">👁</button><button class="act-btn" onclick="editClient('ESB Networks')" title="Edit">✏</button><button class="act-btn danger" onclick="confirmDelete('client','ESB Networks',this)" title="Delete">🗑</button></td></tr>
+          <tr><td class="name">Transport Infrastructure Ireland</td><td>Liam Burke</td><td>l.burke@tii.ie</td><td>086 234 5678</td><td>2</td><td><span class="bdg bdg-grn">Active</span></td><td><button class="act-btn" onclick="viewClient('TII')" title="View">👁</button><button class="act-btn" onclick="editClient('TII')" title="Edit">✏</button><button class="act-btn danger" onclick="confirmDelete('client','TII',this)" title="Delete">🗑</button></td></tr>
+          <tr><td class="name">Kildare County Council</td><td>Anne Smyth</td><td>a.smyth@kildarecoco.ie</td><td>045 980 200</td><td>1</td><td><span class="bdg bdg-grn">Active</span></td><td><button class="act-btn" onclick="viewClient('Kildare CC')" title="View">👁</button><button class="act-btn" onclick="editClient('Kildare CC')" title="Edit">✏</button><button class="act-btn danger" onclick="confirmDelete('client','Kildare CC',this)" title="Delete">🗑</button></td></tr>
+          <tr><td class="name">Westmeath County Council</td><td>Joe Grogan</td><td>j.grogan@westmeathcoco.ie</td><td>044 933 2000</td><td>0</td><td><span class="bdg bdg-gry">Inactive</span></td><td><button class="act-btn" onclick="viewClient('Westmeath CC')" title="View">👁</button><button class="act-btn" onclick="editClient('Westmeath CC')" title="Edit">✏</button><button class="act-btn danger" onclick="confirmDelete('client','Westmeath CC',this)" title="Delete">🗑</button></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: HOLIDAYS ══ -->
+    <div class="page" id="page-holidays">
+      <div class="page-header">
+        <div><div class="page-title">Holiday Requests</div><div class="page-sub">3 pending approval</div></div>
+        <button class="add-btn" onclick="openModal('modal-holiday')">+ New Request</button>
+      </div>
+      <div class="panel">
+        <table class="tbl">
+          <tr><th>Employee</th><th>From</th><th>To</th><th>Days</th><th>Type</th><th>Status</th><th>Action</th></tr>
+          <tr><td class="name">John Murphy</td><td>10 Jun 2026</td><td>17 Jun 2026</td><td>6</td><td>Annual Leave</td><td><span class="bdg bdg-grn">Approved</span></td><td><button class="act-btn" onclick="viewGeneric('Holiday Request',[['Status','See badge'],['Type','Annual Leave']])" title="View">👁</button><button class="act-btn danger" onclick="confirmDelete('holiday request','John Murphy 10–17 Jun',this)" title="Delete">🗑</button></td></tr>
+          <tr id="hol-row-sean"><td class="name">Sean Byrne</td><td>24 Jun 2026</td><td>28 Jun 2026</td><td>3</td><td>Annual Leave</td><td><span class="bdg bdg-amb">Pending</span></td><td><button class="act-btn" onclick="approveHolRow('hol-row-sean')" title="Approve">✓</button><button class="act-btn danger" onclick="declineHolRow('hol-row-sean')" title="Decline">✕</button><button class="act-btn" onclick="viewGeneric('Holiday Request',[['Status','See badge'],['Type','Annual Leave']])" title="View">👁</button></td></tr>
+          <tr id="hol-row-mick"><td class="name">Mick Walsh</td><td>14 Jul 2026</td><td>18 Jul 2026</td><td>5</td><td>Annual Leave</td><td><span class="bdg bdg-amb">Pending</span></td><td><button class="act-btn" onclick="approveHolRow('hol-row-mick')" title="Approve">✓</button><button class="act-btn danger" onclick="declineHolRow('hol-row-mick')" title="Decline">✕</button><button class="act-btn" onclick="viewGeneric('Holiday Request',[['Status','See badge'],['Type','Annual Leave']])" title="View">👁</button></td></tr>
+          <tr><td class="name">Tom Kelly</td><td>3 Mar 2026</td><td>5 Mar 2026</td><td>3</td><td>Annual Leave</td><td><span class="bdg bdg-red">Declined</span></td><td><button class="act-btn" onclick="viewGeneric('Holiday Request',[['Status','See badge'],['Type','Annual Leave']])" title="View">👁</button><button class="act-btn danger" onclick="confirmDelete('holiday request','Tom Kelly 3–5 Mar',this)" title="Delete">🗑</button></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: PLANT MACHINERY ══ -->
+    <div class="page" id="page-machines">
+      <div class="page-header">
+        <div><div class="page-title">Plant Machinery</div><div class="page-sub">25 machines · 2 certs overdue</div></div>
+        <button class="add-btn" onclick="openModal('modal-machine')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Machine
+        </button>
+      </div>
+      <div class="search-bar">
+        <input class="search-input" placeholder="Search machinery...">
+        <select class="filter-sel"><option>All Categories</option><option>Excavator</option><option>Crane</option><option>Backhoe</option></select>
+        <select class="filter-sel"><option>All Status</option><option>Active</option><option>Overdue</option></select>
+      </div>
+      <div class="panel">
+        <table class="tbl">
+          <tr><th>Machine</th><th>Category</th><th>Serial No.</th><th>Site</th><th>GA1 Expiry</th><th>Status</th><th>Action</th></tr>
+          <tr><td class="name">CAT 320 Excavator</td><td>Excavator</td><td>SN-CAT-320-00142</td><td>ESB Mullingar</td><td>12 Mar 2026</td><td><span class="bdg bdg-grn">Active</span></td><td><button class="act-btn" onclick="viewMachine('CAT 320')" title="View">👁</button><button class="act-btn" onclick="editMachine('CAT 320')" title="Edit">✏</button><button class="act-btn" onclick="nav('checklists')" title="Checklist">📋</button><button class="act-btn danger" onclick="confirmDelete('machine','CAT 320 Excavator',this)" title="Delete">🗑</button></td></tr>
+          <tr><td class="name">Komatsu PC210 Excavator</td><td>Excavator</td><td>SN-KOM-210-00887</td><td>ESB Mullingar</td><td>20 May 2026</td><td><span class="bdg bdg-grn">Active</span></td><td><button class="act-btn" onclick="viewMachine('Komatsu PC210')" title="View">👁</button><button class="act-btn" onclick="editMachine('Komatsu PC210')" title="Edit">✏</button><button class="act-btn" onclick="nav('checklists')" title="Checklist">📋</button><button class="act-btn danger" onclick="confirmDelete('machine','Komatsu PC210',this)" title="Delete">🗑</button></td></tr>
+          <tr style="background:#fff9f0"><td class="name" style="color:var(--red)">CAT 308 Mini Excavator</td><td>Excavator</td><td>SN-CAT-308-00334</td><td>ESB Mullingar</td><td style="color:var(--red);font-weight:700">EXPIRED 01 Nov 2025</td><td><span class="bdg bdg-red">Overdue</span></td><td><button class="act-btn" onclick="viewMachine('CAT 308')" title="View">👁</button><button class="act-btn" onclick="editMachine('CAT 308')" title="Edit">✏</button><button class="act-btn" onclick="sendReminder('CAT 308 Mini Excavator owner')" title="Send reminder">📧</button><button class="act-btn danger" onclick="confirmDelete('machine','CAT 308 Mini',this)" title="Delete">🗑</button></td></tr>
+          <tr style="background:#fff9f0"><td class="name" style="color:var(--red)">Volvo EC300 Excavator</td><td>Excavator</td><td>SN-VOL-300-00561</td><td>ESB Mullingar</td><td style="color:var(--red);font-weight:700">EXPIRED 15 Jan 2025</td><td><span class="bdg bdg-red">Overdue</span></td><td><button class="act-btn" onclick="viewMachine('Volvo EC300')" title="View">👁</button><button class="act-btn" onclick="editMachine('Volvo EC300')" title="Edit">✏</button><button class="act-btn" onclick="sendReminder('Volvo EC300 owner')" title="Send reminder">📧</button><button class="act-btn danger" onclick="confirmDelete('machine','Volvo EC300',this)" title="Delete">🗑</button></td></tr>
+          <tr><td class="name">Liebherr LTM 1060 Crane</td><td>Crane</td><td>SN-LIE-106-00219</td><td>ESB Mullingar</td><td>01 Jun 2026</td><td><span class="bdg bdg-grn">Active</span></td><td><button class="act-btn" onclick="viewMachine('Liebherr LTM')" title="View">👁</button><button class="act-btn" onclick="editMachine('Liebherr LTM')" title="Edit">✏</button><button class="act-btn" onclick="nav('checklists')" title="Checklist">📋</button><button class="act-btn danger" onclick="confirmDelete('machine','Liebherr LTM 1060',this)" title="Delete">🗑</button></td></tr>
+          <tr><td class="name">JCB 3CX Backhoe</td><td>Backhoe</td><td>SN-JCB-3CX-00773</td><td>M6 Athlone</td><td>10 Apr 2026</td><td><span class="bdg bdg-grn">Active</span></td><td><button class="act-btn" onclick="viewMachine('JCB 3CX')" title="View">👁</button><button class="act-btn" onclick="editMachine('JCB 3CX')" title="Edit">✏</button><button class="act-btn" onclick="nav('checklists')" title="Checklist">📋</button><button class="act-btn danger" onclick="confirmDelete('machine','JCB 3CX Backhoe',this)" title="Delete">🗑</button></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: GA2 CHECKLISTS ══ -->
+    <div class="page" id="page-checklists">
+      <div class="page-header"><div><div class="page-title">GA2 Checklists</div><div class="page-sub">All submitted plant inspection checklists</div></div><button class="add-btn" onclick="downloadReport('GA2 Checklists')">⬇ Export All</button></div>
+      <div class="panel">
+        <table class="tbl">
+          <tr><th>Date</th><th>Machine</th><th>Operator</th><th>Items</th><th>Photos</th><th>Signed</th><th>Action</th></tr>
+          <tr><td>20 Jun 2026</td><td class="name">CAT 320 EX-001</td><td>John Murphy</td><td><span class="bdg bdg-grn">14/14</span></td><td>2</td><td><span class="bdg bdg-grn">Yes</span></td><td><button class="act-btn" onclick="viewGeneric('GA2 Checklist',[['Date','20 Jun 2026'],['Operator','John Murphy'],['Machine','CAT 320 EX-001'],['Items Completed','14/14'],['Photos','2'],['Signed','Yes']])" title="View">👁</button><button class="act-btn" onclick="downloadReport('GA2-CAT320-2606')" title="Download">⬇</button><button class="act-btn danger" onclick="confirmDelete('checklist','CAT 320 20 Jun',this)" title="Delete">🗑</button></td></tr>
+          <tr><td>19 Jun 2026</td><td class="name">Komatsu PC210</td><td>Sean Byrne</td><td><span class="bdg bdg-amb">12/14</span></td><td>0</td><td><span class="bdg bdg-grn">Yes</span></td><td><button class="act-btn" onclick="viewGeneric('GA2 Checklist',[['Date','20 Jun 2026'],['Operator','John Murphy'],['Machine','CAT 320 EX-001'],['Items Completed','14/14'],['Photos','2'],['Signed','Yes']])" title="View">👁</button><button class="act-btn" onclick="downloadReport('GA2-KOMATSU-1906')" title="Download">⬇</button><button class="act-btn danger" onclick="confirmDelete('checklist','Komatsu 19 Jun',this)" title="Delete">🗑</button></td></tr>
+          <tr><td>18 Jun 2026</td><td class="name">JCB 3CX Backhoe</td><td>Cian Flood</td><td><span class="bdg bdg-grn">14/14</span></td><td>1</td><td><span class="bdg bdg-grn">Yes</span></td><td><button class="act-btn" onclick="viewGeneric('GA2 Checklist',[['Date','20 Jun 2026'],['Operator','John Murphy'],['Machine','CAT 320 EX-001'],['Items Completed','14/14'],['Photos','2'],['Signed','Yes']])" title="View">👁</button><button class="act-btn" onclick="downloadReport('GA2-JCB-1806')" title="Download">⬇</button><button class="act-btn danger" onclick="confirmDelete('checklist','JCB 18 Jun',this)" title="Delete">🗑</button></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: SITES ══ -->
+    <div class="page" id="page-sites">
+      <div class="page-header"><div><div class="page-title">Sites</div><div class="page-sub">4 active construction sites</div></div><button class="add-btn" onclick="openModal('modal-site')">+ Add Site</button></div>
+      <div class="panel">
+        <table class="tbl">
+          <tr><th>Site Name</th><th>Client</th><th>Location</th><th>Staff</th><th>Start Date</th><th>Status</th><th>Action</th></tr>
+          <tr><td class="name">ESB Substation</td><td>ESB Networks</td><td>Mullingar, Westmeath</td><td>6</td><td>01 Mar 2026</td><td><span class="bdg bdg-grn">Active</span></td><td><button class="act-btn" onclick="viewSite('ESB Substation')" title="View">👁</button><button class="act-btn" onclick="editSite('ESB Substation')" title="Edit">✏</button><button class="act-btn danger" onclick="confirmDelete('site','ESB Substation',this)" title="Delete">🗑</button></td></tr>
+          <tr><td class="name">M6 Motorway</td><td>TII</td><td>Athlone, Westmeath</td><td>5</td><td>15 Jan 2026</td><td><span class="bdg bdg-grn">Active</span></td><td><button class="act-btn" onclick="viewSite('M6 Motorway')" title="View">👁</button><button class="act-btn" onclick="editSite('M6 Motorway')" title="Edit">✏</button><button class="act-btn danger" onclick="confirmDelete('site','M6 Motorway',this)" title="Delete">🗑</button></td></tr>
+          <tr><td class="name">R148 Road Works</td><td>Kildare County Council</td><td>Kinnegad, Kildare</td><td>3</td><td>10 Feb 2026</td><td><span class="bdg bdg-grn">Active</span></td><td><button class="act-btn" onclick="viewSite('R148 Road Works')" title="View">👁</button><button class="act-btn" onclick="editSite('R148 Road Works')" title="Edit">✏</button><button class="act-btn danger" onclick="confirmDelete('site','R148 Road Works',this)" title="Delete">🗑</button></td></tr>
+          <tr><td class="name">N4 Bypass</td><td>TII</td><td>Longford</td><td>3</td><td>20 Dec 2025</td><td><span class="bdg bdg-amb">Wrapping Up</span></td><td><button class="act-btn" onclick="viewSite('N4 Bypass')" title="View">👁</button><button class="act-btn" onclick="editSite('N4 Bypass')" title="Edit">✏</button><button class="act-btn danger" onclick="confirmDelete('site','N4 Bypass',this)" title="Delete">🗑</button></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: DAYWORKS ══ -->
+    <div class="page" id="page-dayworks">
+      <div class="page-header"><div><div class="page-title">Dayworks</div><div class="page-sub">8 dockets · 2 awaiting signature</div></div><button class="add-btn" onclick="openModal('modal-add-dw')">+ New Daywork</button></div>
+      <div class="search-bar"><input class="search-input" placeholder="Search dockets..."><select class="filter-sel"><option>All Status</option><option>Signed</option><option>Awaiting</option></select></div>
+      <div class="panel">
+        <table class="tbl">
+          <tr><th>Docket</th><th>Client</th><th>Site</th><th>Date</th><th>Hrs</th><th>Submitted by</th><th>Status</th><th>Action</th></tr>
+          <tr><td class="link name" onclick="viewDaywork('DW-2345')">DW-2345</td><td>ESB Networks</td><td>Mullingar</td><td>20 Jun</td><td>10h</td><td>J. Murphy</td><td><span class="bdg bdg-grn">Signed</span></td><td><button class="act-btn" onclick="downloadDW('DW-2345')" title="Download PDF">⬇</button><button class="act-btn" onclick="viewDaywork('DW-2345')" title="View">👁</button><button class="act-btn danger" onclick="confirmDelete('daywork','DW-2345',this)" title="Delete">🗑</button></td></tr>
+          <tr><td class="link name" onclick="viewDaywork('DW-2346')">DW-2346</td><td>TII</td><td>M6 Athlone</td><td>17 Jun</td><td>9h</td><td>J. Murphy</td><td><span class="bdg bdg-amb">Awaiting</span></td><td><button class="act-btn" onclick="copySignLink('DW-2346')" title="Copy signing link">🔗</button><button class="act-btn" onclick="window.open('sign.html','_blank')" title="Preview signing page">👁</button><button class="act-btn danger" onclick="confirmDelete('daywork','DW-2346',this)" title="Delete">🗑</button></td></tr>
+          <tr><td class="link name" onclick="viewDaywork('DW-2347')">DW-2347</td><td>Kildare CC</td><td>Kinnegad</td><td>18 Jun</td><td>8h</td><td>C. Flood</td><td><span class="bdg bdg-amb">Awaiting</span></td><td><button class="act-btn" onclick="copySignLink('DW-2346')" title="Copy signing link">🔗</button><button class="act-btn" onclick="window.open('sign.html','_blank')" title="Preview signing page">👁</button><button class="act-btn danger" onclick="confirmDelete('daywork','DW-2347',this)" title="Delete">🗑</button></td></tr>
+          <tr><td class="link name" onclick="viewDaywork('DW-2340')">DW-2340</td><td>ESB Networks</td><td>Longford</td><td>10 Jun</td><td>10h</td><td>J. Murphy</td><td><span class="bdg bdg-grn">Signed</span></td><td><button class="act-btn" onclick="downloadDW('DW-2340')" title="Download PDF">⬇</button><button class="act-btn" onclick="viewDaywork('DW-2340')" title="View">👁</button><button class="act-btn danger" onclick="confirmDelete('daywork','DW-2340',this)" title="Delete">🗑</button></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: TIMESHEETS ══ -->
+    <div class="page" id="page-timesheets">
+      <div class="page-header"><div><div class="page-title">Timesheets</div><div class="page-sub">Week of 20 Jun – 26 Jun 2026</div></div><button class="add-btn" onclick="downloadReport('Timesheets-Week-20Jun')">⬇ Export Week</button></div>
+      <div class="panel">
+        <table class="tbl">
+          <tr><th>Employee</th><th>Role</th><th>Site</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Total</th><th>Status</th><th>Action</th></tr>
+          <tr><td class="name">John Murphy</td><td>Excavator Op.</td><td>ESB Mullingar</td><td contenteditable="true" style="cursor:text">8</td><td contenteditable="true" style="cursor:text">8</td><td contenteditable="true" style="cursor:text">8</td><td contenteditable="true" style="cursor:text">8</td><td contenteditable="true" style="cursor:text">8</td><td style="font-weight:700">40h</td><td><span class="bdg bdg-grn">Approved</span></td><td><button class="act-btn" onclick="toast('Timesheet approved')" title="Approve">✓</button><button class="act-btn" onclick="toast('Timesheet exported')" title="Export">⬇</button></td></tr>
+          <tr><td class="name">Sean Byrne</td><td>Plant Operator</td><td>ESB Mullingar</td><td contenteditable="true" style="cursor:text">8</td><td contenteditable="true" style="cursor:text">8</td><td contenteditable="true" style="cursor:text">8</td><td contenteditable="true" style="cursor:text">8</td><td contenteditable="true" style="cursor:text">0</td><td style="font-weight:700">32h</td><td><span class="bdg bdg-grn">Approved</span></td><td><button class="act-btn" onclick="toast('Timesheet approved')" title="Approve">✓</button><button class="act-btn" onclick="toast('Timesheet exported')" title="Export">⬇</button></td></tr>
+          <tr><td class="name">Tom Kelly</td><td>Site Foreman</td><td>ESB Mullingar</td><td contenteditable="true" style="cursor:text">9</td><td contenteditable="true" style="cursor:text">9</td><td contenteditable="true" style="cursor:text">9</td><td contenteditable="true" style="cursor:text">9</td><td contenteditable="true" style="cursor:text">9</td><td style="font-weight:700">45h</td><td><span class="bdg bdg-amb" id="ts-tom">Pending</span></td><td><button class="act-btn" onclick="approveTs2('ts-tom')" title="Approve">✓</button><button class="act-btn" onclick="toast('Flagged for review')" title="Flag">⚑</button></td></tr>
+          <tr><td class="name">Pat Doyle</td><td>Labourer</td><td>ESB Mullingar</td><td contenteditable="true" style="cursor:text">8</td><td contenteditable="true" style="cursor:text">8</td><td contenteditable="true" style="cursor:text">8</td><td contenteditable="true" style="cursor:text">8</td><td contenteditable="true" style="cursor:text">0</td><td style="font-weight:700">32h</td><td><span class="bdg bdg-red" id="ts-pat">Flagged</span></td><td><button class="act-btn" onclick="approveTs2('ts-pat')" title="Approve">✓</button><button class="act-btn" onclick="toast('Note added')" title="Add note">✎</button></td></tr>
+          <tr><td class="name">Mick Walsh</td><td>Crane Operator</td><td>ESB Mullingar</td><td contenteditable="true" style="cursor:text">9</td><td contenteditable="true" style="cursor:text">9</td><td contenteditable="true" style="cursor:text">9</td><td contenteditable="true" style="cursor:text">9</td><td contenteditable="true" style="cursor:text">8</td><td style="font-weight:700">44h</td><td><span class="bdg bdg-amb" id="ts-mick">Pending</span></td><td><button class="act-btn" onclick="approveTs2('ts-mick')" title="Approve">✓</button><button class="act-btn" onclick="toast('Flagged for review')" title="Flag">⚑</button></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: H&S ══ -->
+    <div class="page" id="page-hs">
+      <div class="page-header"><div><div class="page-title">Health &amp; Safety</div><div class="page-sub">1 toolbox talk unacknowledged</div></div><button class="add-btn" onclick="openModal('modal-hs')">+ Add Document</button></div>
+      <div class="panels-2">
+        <div class="panel"><div class="ph"><div class="ph-title">Induction Records</div><div class="ph-actions"><button class="ph-btn ph-btn-outline" onclick="downloadReport('Inductions')">⬇ Export</button><button class="ph-btn" onclick="openModal('modal-hs')">+ Add</button></div></div><table class="tbl"><tr><th>Employee</th><th>Site</th><th>Date</th><th>Status</th><th>Action</th></tr><tr><td class="name">John Murphy</td><td>ESB Mullingar</td><td>01 Mar 2026</td><td><span class="bdg bdg-grn">Complete</span></td><td><button class="act-btn" onclick="viewGeneric('Induction Record',[['Employee','See row'],['Site','ESB Substation, Mullingar'],['Date','01 Mar 2026'],['Status','Complete']])" title="View">👁</button><button class="act-btn" onclick="downloadReport('Induction-JMurphy')" title="Download">⬇</button><button class="act-btn danger" onclick="confirmDelete('induction record','John Murphy',this)" title="Delete">🗑</button></td></tr><tr><td class="name">Sean Byrne</td><td>ESB Mullingar</td><td>01 Mar 2026</td><td><span class="bdg bdg-grn">Complete</span></td><td><button class="act-btn" onclick="viewGeneric('Induction Record',[['Employee','See row'],['Site','ESB Substation, Mullingar'],['Date','01 Mar 2026'],['Status','Complete']])" title="View">👁</button><button class="act-btn" onclick="downloadReport('Induction-SByrne')" title="Download">⬇</button><button class="act-btn danger" onclick="confirmDelete('induction record','Sean Byrne',this)" title="Delete">🗑</button></td></tr></table></div>
+        <div class="panel"><div class="ph"><div class="ph-title">Toolbox Talks</div><div class="ph-actions"><button class="ph-btn ph-btn-outline" onclick="downloadReport('Toolbox-Talks')">⬇ Export</button><button class="ph-btn" onclick="openModal('modal-hs')">+ Add</button></div></div><table class="tbl"><tr><th>Topic</th><th>Date</th><th>Acknowledged</th><th>Action</th></tr><tr><td class="name">Working at Height</td><td>18 Jun 2026</td><td><span class="bdg bdg-red" title="Pending: Pat Doyle">5 of 6 — Pat Doyle pending</span></td><td><button class="act-btn" onclick="viewToolboxTalk('Working at Height')" title="View">👁</button><button class="act-btn" onclick="sendReminder('Pat Doyle')" title="Send reminder">📧</button><button class="act-btn danger" onclick="confirmDelete('toolbox talk','Working at Height',this)" title="Delete">🗑</button></td></tr><tr><td class="name">Plant &amp; Traffic Management</td><td>10 Jun 2026</td><td><span class="bdg bdg-grn wrap">6 of 6 — all acknowledged</span></td><td><button class="act-btn" onclick="viewToolboxTalk('Plant &amp; Traffic Management')" title="View">👁</button><button class="act-btn" onclick="downloadReport('Toolbox-Traffic')" title="Download">⬇</button><button class="act-btn danger" onclick="confirmDelete('toolbox talk','Plant & Traffic',this)" title="Delete">🗑</button></td></tr></table></div>
+        <div class="panel"><div class="ph"><div class="ph-title">RAMS</div><div class="ph-actions"><button class="ph-btn" onclick="openModal('modal-hs')">+ Add</button></div></div><table class="tbl"><tr><th>Document</th><th>Version</th><th>Uploaded</th><th>Action</th></tr><tr><td class="name">Excavation RAMS</td><td>v2.1</td><td>15 Jun 2026</td><td><button class="act-btn" onclick="viewGeneric('RAMS Document',[['Type','Risk Assessment / Method Statement'],['Version','See row'],['Uploaded','See row']])" title="View">👁</button><button class="act-btn" onclick="downloadReport('RAMS-Excavation')" title="Download">⬇</button><button class="act-btn danger" onclick="confirmDelete('RAMS','Excavation RAMS',this)" title="Delete">🗑</button></td></tr><tr><td class="name">Crane Lift Plan</td><td>v1.0</td><td>01 Mar 2026</td><td><button class="act-btn" onclick="viewGeneric('RAMS Document',[['Type','Risk Assessment / Method Statement'],['Version','See row'],['Uploaded','See row']])" title="View">👁</button><button class="act-btn" onclick="downloadReport('RAMS-CraneLift')" title="Download">⬇</button><button class="act-btn danger" onclick="confirmDelete('RAMS','Crane Lift Plan',this)" title="Delete">🗑</button></td></tr></table></div>
+        <div class="panel"><div class="ph"><div class="ph-title">Incident Reports</div><div class="ph-actions"><button class="ph-btn" onclick="openModal('modal-hs')">+ Log Incident</button></div></div><table class="tbl"><tr><th>Type</th><th>Date</th><th>Site</th><th>Status</th><th>Action</th></tr><tr><td><span class="bdg bdg-amb">Near Miss</span></td><td>12 Jun 2026</td><td>ESB Mullingar</td><td><span class="bdg bdg-grn">Closed</span></td><td><button class="act-btn" onclick="toast('Incident report opened')" title="View">👁</button><button class="act-btn" onclick="downloadReport('Incident-12Jun')" title="Download">⬇</button><button class="act-btn danger" onclick="confirmDelete('incident report','12 Jun 2026',this)" title="Delete">🗑</button></td></tr></table></div>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: RAMS ══ -->
+    <div class="page" id="page-rams">
+      <div class="page-header"><div><div class="page-title">RAMS</div><div class="page-sub">Risk Assessments &amp; Method Statements</div></div><button class="add-btn" onclick="openModal('modal-hs')">+ Upload RAMS</button></div>
+      <div class="panel"><table class="tbl"><tr><th>Document Title</th><th>Type</th><th>Version</th><th>Site</th><th>Uploaded</th><th>Action</th></tr><tr><td class="name">Excavation Method Statement</td><td>Method Statement</td><td>v2.1</td><td>ESB Mullingar</td><td>15 Jun 2026</td><td><button class="act-btn" onclick="viewGeneric('RAMS Document',[['Type','See row'],['Version','See row'],['Site','See row']])" title="View">👁</button><button class="act-btn" onclick="downloadReport('RAMS-Excavation')" title="Download">⬇</button><button class="act-btn danger" onclick="confirmDelete('RAMS','Excavation Method Statement',this)" title="Delete">🗑</button></td></tr><tr><td class="name">Traffic Management Plan</td><td>Risk Assessment</td><td>v1.3</td><td>M6 Athlone</td><td>10 May 2026</td><td><button class="act-btn" onclick="viewGeneric('RAMS Document',[['Type','See row'],['Version','See row'],['Site','See row']])" title="View">👁</button><button class="act-btn" onclick="downloadReport('RAMS-Traffic')" title="Download">⬇</button><button class="act-btn danger" onclick="confirmDelete('RAMS','Traffic Management Plan',this)" title="Delete">🗑</button></td></tr><tr><td class="name">Crane Lift Plan — LTM 1060</td><td>Lift Plan</td><td>v1.0</td><td>ESB Mullingar</td><td>01 Mar 2026</td><td><button class="act-btn" onclick="viewGeneric('RAMS Document',[['Type','See row'],['Version','See row'],['Site','See row']])" title="View">👁</button><button class="act-btn" onclick="downloadReport('RAMS-CraneLift')" title="Download">⬇</button><button class="act-btn danger" onclick="confirmDelete('RAMS','Crane Lift Plan',this)" title="Delete">🗑</button></td></tr></table></div>
+    </div>
+
+    <!-- ══ PAGE: TOOLBOX TALKS ══ -->
+    <div class="page" id="page-toolbox">
+      <div class="page-header"><div><div class="page-title">Toolbox Talks</div><div class="page-sub">Safety briefings for all staff</div></div><button class="add-btn" onclick="openModal('modal-hs')">+ New Talk</button></div>
+      <div class="panel"><table class="tbl"><tr><th>Topic</th><th>Date</th><th>Presented by</th><th>Acknowledged</th><th>Action</th></tr><tr><td class="name">Working at Height</td><td>18 Jun 2026</td><td>Tom Kelly</td><td><span class="bdg bdg-red wrap">5 of 6 — Pat Doyle pending</span></td><td><button class="act-btn" onclick="viewToolboxTalk('Working at Height')" title="View">👁</button><button class="act-btn" onclick="sendReminder('Pat Doyle')" title="Send reminder">📧</button><button class="act-btn" onclick="downloadReport('Toolbox-Height')" title="Download">⬇</button><button class="act-btn danger" onclick="confirmDelete('toolbox talk','Working at Height',this)" title="Delete">🗑</button></td></tr><tr><td class="name">Plant &amp; Traffic Management</td><td>10 Jun 2026</td><td>Tom Kelly</td><td><span class="bdg bdg-grn wrap">6 of 6 — all acknowledged</span></td><td><button class="act-btn" onclick="viewToolboxTalk('Plant &amp; Traffic Management')" title="View">👁</button><button class="act-btn" onclick="downloadReport('Toolbox-Traffic')" title="Download">⬇</button><button class="act-btn danger" onclick="confirmDelete('toolbox talk','Plant & Traffic',this)" title="Delete">🗑</button></td></tr></table></div>
+    </div>
+
+    <!-- ══ PAGE: INCIDENTS ══ -->
+    <div class="page" id="page-incidents">
+      <div class="page-header"><div><div class="page-title">Incident Reports</div><div class="page-sub">All accidents, near misses &amp; hazards</div></div><button class="add-btn" onclick="openModal('modal-hs')">+ Log Incident</button></div>
+      <div class="panel"><table class="tbl"><tr><th>Type</th><th>Date</th><th>Site</th><th>Reported by</th><th>Description</th><th>Status</th><th>Action</th></tr><tr><td><span class="bdg bdg-amb">Near Miss</span></td><td>12 Jun 2026</td><td>ESB Mullingar</td><td>John Murphy</td><td>Unsecured load on flatbed</td><td><span class="bdg bdg-grn">Closed</span></td><td><button class="act-btn" onclick="viewGeneric('Incident Report',[['Type','Near Miss'],['Date','12 Jun 2026'],['Site','ESB Substation, Mullingar'],['Reported by','John Murphy'],['Description','Unsecured load on flatbed'],['Status','Closed']])" title="View">👁</button><button class="act-btn" onclick="downloadReport('Incident-12Jun')" title="Download">⬇</button><button class="act-btn danger" onclick="confirmDelete('incident report','12 Jun 2026',this)" title="Delete">🗑</button></td></tr></table></div>
+    </div>
+
+    <!-- ══ PAGE: REPORTS ══ -->
+    <div class="page" id="page-reports">
+      <div class="page-header"><div><div class="page-title">Reports &amp; Exports</div><div class="page-sub">Download data for payroll, compliance and billing</div></div></div>
+      <div class="panels-2">
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--g400);text-transform:uppercase;margin-bottom:10px">Payroll &amp; Timesheets</div>
+          <div class="report-card"><div class="report-icon" style="background:#dbeafe;font-size:22px">⏱</div><div style="flex:1"><div class="report-title">Weekly Timesheet Export</div><div class="report-sub">All staff · Week of 20 Jun 2026</div></div><button class="dl-btn" onclick="downloadReport('Timesheets-Week-20Jun')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download CSV</button></div>
+          <div class="report-card"><div class="report-icon" style="background:#dcfce7;font-size:22px">📊</div><div style="flex:1"><div class="report-title">Monthly Payroll Summary</div><div class="report-sub">June 2026 · All employees</div></div><button class="dl-btn" onclick="downloadReport('Payroll-June2026')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download PDF</button></div>
+          <div class="report-card"><div class="report-icon" style="background:#ede9fe;font-size:22px">💼</div><div style="flex:1"><div class="report-title">Holiday Leave Report</div><div class="report-sub">All staff · Year to date</div></div><button class="dl-btn" onclick="downloadReport('Holidays-YTD')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download CSV</button></div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--g400);text-transform:uppercase;margin-bottom:10px">Dayworks &amp; Plant</div>
+          <div class="report-card"><div class="report-icon" style="background:#fef3c7;font-size:22px">📄</div><div style="flex:1"><div class="report-title">Dayworks Summary</div><div class="report-sub">All signed dockets · June 2026</div></div><button class="dl-btn" onclick="downloadReport('Dayworks-June2026')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download PDF</button></div>
+          <div class="report-card"><div class="report-icon" style="background:#fee2e2;font-size:22px">🏗</div><div style="flex:1"><div class="report-title">Plant GA1 Status Report</div><div class="report-sub">All machinery · Cert expiry dates</div></div><button class="dl-btn" onclick="downloadReport('PlantGA1-Status')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download CSV</button></div>
+          <div class="report-card"><div class="report-icon" style="background:#dcfce7;font-size:22px">🛡</div><div style="flex:1"><div class="report-title">H&amp;S Compliance Report</div><div class="report-sub">All sites · Including RAMS, inductions</div></div><button class="dl-btn" onclick="downloadReport('HS-Compliance')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download PDF</button></div>
+          <div class="report-card"><div class="report-icon" style="background:#e0e7ff;font-size:22px">✅</div><div style="flex:1"><div class="report-title">GA2 Checklist Export</div><div class="report-sub">All submitted checklists · June 2026</div></div><button class="dl-btn" onclick="downloadReport('GA2-AllChecklists')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download CSV</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: SETTINGS ══ -->
+    <div class="page" id="page-settings">
+      <div class="page-header"><div><div class="page-title">Settings</div><div class="page-sub">Company profile and system preferences</div></div><button class="add-btn" onclick="toast('Settings saved')">Save Changes</button></div>
+      <div class="panels-2">
+        <div class="panel"><div class="ph"><div class="ph-title">Company Details</div></div><div style="padding:16px"><div class="form-row"><div class="form-group"><label>Company Name</label><input class="form-control" value="E. Lynch &amp; Sons Civils"></div><div class="form-group"><label>VAT Number</label><input class="form-control" value="IE1234567AB"></div></div><div class="form-row"><div class="form-group"><label>Phone</label><input class="form-control" value="+353 44 123 4567"></div><div class="form-group"><label>Email</label><input class="form-control" value="admin@elynch.ie"></div></div><div class="form-group"><label>Address</label><textarea class="form-control">Unit 4, Mullingar Business Park, Mullingar, Co. Westmeath</textarea></div></div></div>
+        <div class="panel"><div class="ph"><div class="ph-title">System Preferences</div></div><div style="padding:16px"><div class="form-row"><div class="form-group"><label>Default Site</label><select class="form-control"><option>ESB Substation, Mullingar</option><option>M6 Athlone</option></select></div><div class="form-group"><label>Timesheet Week Start</label><select class="form-control"><option>Monday</option><option>Sunday</option></select></div></div><div class="form-row"><div class="form-group"><label>Annual Leave Allowance (days)</label><input class="form-control" type="number" value="25"></div><div class="form-group"><label>PIN Length</label><select class="form-control"><option>4 digits</option><option>6 digits</option></select></div></div><div class="form-row"><div class="form-group"><label>Signing Page URL</label><input class="form-control" value="elynch.app/sign"></div><div class="form-group"><label>Admin Email</label><input class="form-control" value="admin@elynch.ie"></div></div></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ MODALS ══ -->
+
+<!-- Employee modal -->
+<div class="modal-bg" id="modal-emp">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title" id="modal-emp-title">Add Employee</div><button class="modal-close" onclick="closeModal('modal-emp')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row"><div class="form-group"><label>First Name</label><input class="form-control" id="emp-fname" placeholder="John"></div><div class="form-group"><label>Last Name</label><input class="form-control" id="emp-lname" placeholder="Murphy"></div></div>
+      <div class="form-row"><div class="form-group"><label>Role</label><select class="form-control"><option>Excavator Operator</option><option>Plant Operator</option><option>Site Foreman</option><option>Labourer</option><option>Crane Operator</option><option>Machine Operator</option></select></div><div class="form-group"><label>Site</label><select class="form-control"><option>ESB Substation, Mullingar</option><option>M6 Motorway, Athlone</option><option>R148 Road, Kinnegad</option><option>N4 Bypass, Longford</option></select></div></div>
+      <div class="form-row"><div class="form-group"><label>PIN (4 digits)</label><input class="form-control" type="password" maxlength="4" placeholder="••••"></div><div class="form-group"><label>Safe Pass No.</label><input class="form-control" placeholder="e.g. SP12345678"></div></div>
+      <div class="form-row"><div class="form-group"><label>Phone</label><input class="form-control" type="tel" placeholder="087 000 0000"></div><div class="form-group"><label>Email</label><input class="form-control" type="email" placeholder="john@example.com"></div></div>
+      <div class="form-group"><label>Notes</label><textarea class="form-control" placeholder="Any additional notes..."></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn-cancel" onclick="closeModal('modal-emp')">Cancel</button><button class="btn-primary" onclick="saveAndClose('modal-emp','Employee saved')">Save Employee</button></div>
+  </div>
+</div>
+
+<!-- Client modal -->
+<div class="modal-bg" id="modal-client">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title" id="modal-client-title">Add Client</div><button class="modal-close" onclick="closeModal('modal-client')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Company Name</label><input class="form-control" id="client-name" placeholder="e.g. ESB Networks"></div>
+      <div class="form-row"><div class="form-group"><label>Contact Name</label><input class="form-control" id="client-contact" placeholder="Mary Fahy"></div><div class="form-group"><label>Contact Role</label><input class="form-control" id="client-role" placeholder="Site Manager"></div></div>
+      <div class="form-row"><div class="form-group"><label>Email</label><input class="form-control" type="email" id="client-email" placeholder="contact@company.ie"></div><div class="form-group"><label>Phone</label><input class="form-control" type="tel" id="client-phone" placeholder="087 000 0000"></div></div>
+      <div class="form-group"><label>Address</label><textarea class="form-control" id="client-address" placeholder="Client address..."></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn-cancel" onclick="closeModal('modal-client')">Cancel</button><button class="btn-primary" onclick="saveAndClose('modal-client','Client saved')">Save Client</button></div>
+  </div>
+</div>
+
+<!-- Machine modal -->
+<div class="modal-bg" id="modal-machine">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title" id="modal-machine-title">Add Machine</div><button class="modal-close" onclick="closeModal('modal-machine')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row"><div class="form-group"><label>Machine Name</label><input class="form-control" id="mach-name" placeholder="e.g. CAT 320 Excavator"></div><div class="form-group"><label>Category</label><select class="form-control"><option>Excavator</option><option>Crane</option><option>Backhoe</option><option>Dumper</option><option>Roller</option></select></div></div>
+      <div class="form-row"><div class="form-group"><label>Serial Number</label><input class="form-control" id="mach-serial" placeholder="SN-XXX-000-00000"></div><div class="form-group"><label>Registration</label><input class="form-control" placeholder="e.g. 22-WH-1234"></div></div>
+      <div class="form-row"><div class="form-group"><label>Site</label><input class="form-control" id="mach-site" placeholder="ESB Substation, Mullingar"></div><div class="form-group"><label>GA1 Expiry Date</label><input class="form-control" type="date" id="mach-expiry"></div></div>
+      <div class="form-group"><label>Notes</label><textarea class="form-control" placeholder="Service history, defects, notes..."></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn-cancel" onclick="closeModal('modal-machine')">Cancel</button><button class="btn-primary" onclick="saveAndClose('modal-machine','Machine saved')">Save Machine</button></div>
+  </div>
+</div>
+
+<!-- Site modal -->
+<div class="modal-bg" id="modal-site">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title" id="modal-site-title">Add Site</div><button class="modal-close" onclick="closeModal('modal-site')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row"><div class="form-group"><label>Site Name</label><input class="form-control" id="site-name" placeholder="e.g. ESB Substation"></div><div class="form-group"><label>Client</label><select class="form-control"><option>ESB Networks</option><option>TII</option><option>Kildare County Council</option></select></div></div>
+      <div class="form-row"><div class="form-group"><label>Location</label><input class="form-control" id="site-location" placeholder="Town, County"></div><div class="form-group"><label>Start Date</label><input class="form-control" type="date" id="site-start"></div></div>
+      <div class="form-group"><label>Notes</label><textarea class="form-control" placeholder="Site details..."></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn-cancel" onclick="closeModal('modal-site')">Cancel</button><button class="btn-primary" onclick="saveAndClose('modal-site','Site saved')">Save Site</button></div>
+  </div>
+</div>
+
+<!-- New Daywork modal -->
+<div class="modal-bg" id="modal-add-dw">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">New Daywork</div><button class="modal-close" onclick="closeModal('modal-add-dw')">✕</button></div>
+    <div class="modal-body">
+      <div style="background:var(--brand);color:#fff;padding:10px 14px;border-radius:8px;text-align:center;font-weight:700;margin-bottom:14px">Docket Number: DW-2349</div>
+      <div class="form-row"><div class="form-group"><label>Date</label><input class="form-control" type="date" value="2026-06-20"></div><div class="form-group"><label>Client</label><select class="form-control"><option>ESB Networks</option><option>TII</option><option>Kildare County Council</option></select></div></div>
+      <div class="form-row"><div class="form-group"><label>Site</label><select class="form-control"><option>ESB Substation, Mullingar</option><option>M6 Motorway, Athlone</option></select></div><div class="form-group"><label>Submitted by</label><select class="form-control"><option>John Murphy</option><option>Sean Byrne</option><option>Tom Kelly</option></select></div></div>
+      <div class="form-row"><div class="form-group"><label>Start Time</label><input class="form-control" type="time" value="07:00"></div><div class="form-group"><label>End Time</label><input class="form-control" type="time" value="17:00"></div></div>
+      <div class="form-group"><label>Description of Works</label><textarea class="form-control" placeholder="Concrete pours, groundworks..."></textarea></div>
+      <div class="form-group"><label>Plant / Labour Used</label><textarea class="form-control" placeholder="1x CAT 320, 2x operators..."></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn-cancel" onclick="closeModal('modal-add-dw')">Cancel</button><button class="btn-primary" onclick="saveAndClose('modal-add-dw','Daywork DW-2349 created')">Create Daywork</button></div>
+  </div>
+</div>
+
+<!-- H&S modal -->
+<div class="modal-bg" id="modal-hs">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">Add H&amp;S Document</div><button class="modal-close" onclick="closeModal('modal-hs')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row"><div class="form-group"><label>Document Type</label><select class="form-control"><option>Induction</option><option>RAMS</option><option>Toolbox Talk</option><option>SDS</option><option>Incident Report</option><option>Rescue Plan</option><option>Lift Plan</option></select></div><div class="form-group"><label>Site</label><select class="form-control"><option>ESB Substation, Mullingar</option><option>M6 Motorway, Athlone</option><option>All Sites</option></select></div></div>
+      <div class="form-row"><div class="form-group"><label>Title</label><input class="form-control" placeholder="Document title..."></div><div class="form-group"><label>Date</label><input class="form-control" type="date"></div></div>
+      <div class="form-group"><label>Notes / Description</label><textarea class="form-control" placeholder="Details..."></textarea></div>
+      <div class="form-group"><label>Upload File</label><input class="form-control" type="file" accept=".pdf,.doc,.docx"></div>
+    </div>
+    <div class="modal-foot"><button class="btn-cancel" onclick="closeModal('modal-hs')">Cancel</button><button class="btn-primary" onclick="saveAndClose('modal-hs','Document saved')">Save Document</button></div>
+  </div>
+</div>
+
+<!-- Holiday modal -->
+<div class="modal-bg" id="modal-holiday">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">New Holiday Request</div><button class="modal-close" onclick="closeModal('modal-holiday')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row"><div class="form-group"><label>Employee</label><select class="form-control"><option>John Murphy</option><option>Sean Byrne</option><option>Tom Kelly</option><option>Pat Doyle</option></select></div><div class="form-group"><label>Type</label><select class="form-control"><option>Annual Leave</option><option>Sick Leave</option><option>Unpaid Leave</option></select></div></div>
+      <div class="form-row"><div class="form-group"><label>From</label><input class="form-control" type="date"></div><div class="form-group"><label>To</label><input class="form-control" type="date"></div></div>
+      <div class="form-group"><label>Notes</label><textarea class="form-control" placeholder="Reason or notes..."></textarea></div>
+    </div>
+    <div class="modal-foot"><button class="btn-cancel" onclick="closeModal('modal-holiday')">Cancel</button><button class="btn-primary" onclick="saveAndClose('modal-holiday','Holiday request saved')">Save Request</button></div>
+  </div>
+</div>
+
+<!-- Confirm Delete modal -->
+<div class="modal-bg" id="modal-confirm">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-body" style="padding-top:28px">
+      <div class="confirm-icon danger">🗑</div>
+      <div class="confirm-title">Delete <span id="confirm-type"></span>?</div>
+      <div class="confirm-sub" id="confirm-sub"></div>
+    </div>
+    <div class="modal-foot"><button class="btn-cancel" onclick="closeModal('modal-confirm')">Cancel</button><button class="btn-danger" id="confirm-delete-btn">Yes, delete</button></div>
+  </div>
+</div>
+
+<!-- View Record modal (generic) -->
+<div class="modal-bg" id="modal-view">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-head"><div class="modal-title" id="view-title">Record</div><button class="modal-close" onclick="closeModal('modal-view')">✕</button></div>
+    <div class="modal-body" id="view-body"></div>
+    <div class="modal-foot"><button class="btn-cancel" onclick="closeModal('modal-view')">Close</button></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── DATA RECORDS (for view/edit population) ── */
+const CLIENTS = {
+  'ESB Networks': { contact:'Mary Fahy', role:'Site Manager', email:'m.fahy@esb.ie', phone:'087 123 4567', address:'ESB Networks, Mullingar Substation Office, Co. Westmeath' },
+  'TII': { contact:'Liam Burke', role:'Project Engineer', email:'l.burke@tii.ie', phone:'086 234 5678', address:'Transport Infrastructure Ireland, Athlone, Co. Westmeath' },
+  'Kildare CC': { contact:'Anne Smyth', role:'Roads Officer', email:'a.smyth@kildarecoco.ie', phone:'045 980 200', address:'Kildare County Council, Áras Chill Dara, Naas, Co. Kildare' },
+  'Westmeath CC': { contact:'Joe Grogan', role:'Engineer', email:'j.grogan@westmeathcoco.ie', phone:'044 933 2000', address:'Westmeath County Council, Mullingar, Co. Westmeath' },
+};
+const SITES = {
+  'ESB Substation': { client:'ESB Networks', location:'Mullingar, Co. Westmeath', start:'2026-03-01', staff:6, status:'Active' },
+  'M6 Motorway': { client:'TII', location:'Athlone, Co. Westmeath', start:'2026-01-15', staff:5, status:'Active' },
+  'R148 Road Works': { client:'Kildare County Council', location:'Kinnegad, Co. Kildare', start:'2026-02-10', staff:3, status:'Active' },
+  'N4 Bypass': { client:'TII', location:'Longford', start:'2025-12-20', staff:3, status:'Wrapping Up' },
+};
+const EMPLOYEES = {
+  'John Murphy': { role:'Excavator Operator', site:'ESB Substation, Mullingar', phone:'087 111 2222', email:'j.murphy@elynch.ie', safepass:'SP10023456', status:'Active', certs:'Valid' },
+  'Sean Byrne': { role:'Plant Operator', site:'ESB Substation, Mullingar', phone:'087 222 3333', email:'s.byrne@elynch.ie', safepass:'SP10023457', status:'Active', certs:'Valid' },
+  'Tom Kelly': { role:'Site Foreman', site:'ESB Substation, Mullingar', phone:'087 333 4444', email:'t.kelly@elynch.ie', safepass:'SP10023458', status:'Active', certs:'Valid' },
+  'Pat Doyle': { role:'Labourer', site:'ESB Substation, Mullingar', phone:'087 444 5555', email:'p.doyle@elynch.ie', safepass:'SP10023459', status:'Active', certs:'1 Due' },
+  'Mick Walsh': { role:'Crane Operator', site:'ESB Substation, Mullingar', phone:'087 555 6666', email:'m.walsh@elynch.ie', safepass:'SP10023460', status:'Active', certs:'Valid' },
+  'Declan Ryan': { role:'Machine Operator', site:'ESB Substation, Mullingar', phone:'087 666 7777', email:'d.ryan@elynch.ie', safepass:'SP10023461', status:'Active', certs:'Valid' },
+  'Cian Flood': { role:'Labourer', site:'M6 Motorway, Athlone', phone:'087 777 8888', email:'c.flood@elynch.ie', safepass:'SP10023462', status:'Active', certs:'Valid' },
+  'Brian Nolan': { role:'Plant Operator', site:'R148 Road, Kinnegad', phone:'087 888 9999', email:'b.nolan@elynch.ie', safepass:'SP10023463', status:'On Leave', certs:'Valid' },
+};
+const MACHINES = {
+  'CAT 320': { full:'CAT 320 Excavator', category:'Excavator', serial:'SN-CAT-320-00142', site:'ESB Substation, Mullingar', expiry:'2026-03-12', status:'Active' },
+  'Komatsu PC210': { full:'Komatsu PC210 Excavator', category:'Excavator', serial:'SN-KOM-210-00887', site:'ESB Substation, Mullingar', expiry:'2026-05-20', status:'Active' },
+  'CAT 308': { full:'CAT 308 Mini Excavator', category:'Excavator', serial:'SN-CAT-308-00334', site:'ESB Substation, Mullingar', expiry:'2025-11-01', status:'Overdue' },
+  'Volvo EC300': { full:'Volvo EC300 Excavator', category:'Excavator', serial:'SN-VOL-300-00561', site:'ESB Substation, Mullingar', expiry:'2025-01-15', status:'Overdue' },
+  'Liebherr LTM': { full:'Liebherr LTM 1060 Crane', category:'Crane', serial:'SN-LIE-106-00219', site:'ESB Substation, Mullingar', expiry:'2026-06-01', status:'Active' },
+  'JCB 3CX': { full:'JCB 3CX Backhoe', category:'Backhoe', serial:'SN-JCB-3CX-00773', site:'M6 Motorway, Athlone', expiry:'2026-04-10', status:'Active' },
+};
+const DAYWORKS = {
+  'DW-2345': { client:'ESB Networks', site:'ESB Substation, Mullingar', date:'20 Jun 2026', desc:'Concrete Pours', hours:'10h', status:'Signed', signedDate:'19 Jun 2026', submittedBy:'John Murphy' },
+  'DW-2346': { client:'TII', site:'M6 Motorway, Athlone', date:'17 Jun 2026', desc:'Drainage Works', hours:'9h', status:'Awaiting', submittedBy:'John Murphy' },
+  'DW-2347': { client:'Kildare County Council', site:'R148 Road, Kinnegad', date:'18 Jun 2026', desc:'Surface Dressing', hours:'8h', status:'Awaiting', submittedBy:'Cian Flood' },
+  'DW-2340': { client:'ESB Networks', site:'N4 Bypass, Longford', date:'10 Jun 2026', desc:'Cable Ducting', hours:'10h', status:'Signed', signedDate:'11 Jun 2026', submittedBy:'John Murphy' },
+};
+const TOOLBOX_TALKS = {
+  'Working at Height': {
+    date: '18 Jun 2026', presentedBy: 'Tom Kelly',
+    attendees: [
+      { name:'John Murphy', ack:true }, { name:'Sean Byrne', ack:true },
+      { name:'Tom Kelly', ack:true }, { name:'Mick Walsh', ack:true },
+      { name:'Declan Ryan', ack:true }, { name:'Pat Doyle', ack:false },
+    ],
+  },
+  'Plant & Traffic Management': {
+    date: '10 Jun 2026', presentedBy: 'Tom Kelly',
+    attendees: [
+      { name:'John Murphy', ack:true }, { name:'Sean Byrne', ack:true },
+      { name:'Tom Kelly', ack:true }, { name:'Pat Doyle', ack:true },
+      { name:'Mick Walsh', ack:true }, { name:'Declan Ryan', ack:true },
+    ],
+  },
+};
+
+/* ── NAVIGATION ── */
+function nav(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nl').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.top-tab').forEach(t => t.classList.remove('active'));
+  const pg = document.getElementById('page-' + page);
+  if (pg) pg.classList.add('active');
+  const nl = document.getElementById('nl-' + page);
+  if (nl) nl.classList.add('active');
+  document.querySelectorAll('.top-tab').forEach(t => {
+    if (t.textContent.trim().toLowerCase().includes(page.toLowerCase())) t.classList.add('active');
+  });
+  const greet = document.getElementById('greet-bar');
+  greet.style.display = page === 'dashboard' ? '' : 'none';
+  window.scrollTo({ top: 0 });
+}
+
+/* ── MODALS ── */
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+document.querySelectorAll('.modal-bg').forEach(bg => {
+  bg.addEventListener('click', e => { if (e.target === bg) bg.classList.remove('open'); });
+});
+function saveAndClose(modalId, msg) {
+  closeModal(modalId);
+  toast(msg + ' ✓');
+}
+
+/* ── GENERIC VIEW MODAL ── */
+function viewRecord(title, rows) {
+  document.getElementById('view-title').textContent = title;
+  document.getElementById('view-body').innerHTML = rows.map(([k,v]) =>
+    '<div class="detail-kv"><span class="dk">' + k + '</span><span class="dv">' + v + '</span></div>'
+  ).join('');
+  openModal('modal-view');
+}
+
+function viewEmployee(name) {
+  const e = EMPLOYEES[name];
+  if (!e) { toast('No record found'); return; }
+  viewRecord(name, [
+    ['Role', e.role], ['Site', e.site], ['Status', e.status],
+    ['Phone', e.phone], ['Email', e.email], ['Safe Pass No.', e.safepass],
+    ['Certs', e.certs],
+  ]);
+}
+
+function viewClient(key) {
+  const c = CLIENTS[key];
+  if (!c) { toast('No record found'); return; }
+  viewRecord(key, [
+    ['Contact', c.contact], ['Role', c.role], ['Email', c.email],
+    ['Phone', c.phone], ['Address', c.address],
+  ]);
+}
+
+function viewSite(key) {
+  const s = SITES[key];
+  if (!s) { toast('No record found'); return; }
+  viewRecord(key, [
+    ['Client', s.client], ['Location', s.location], ['Start Date', s.start],
+    ['Staff on Site', s.staff], ['Status', s.status],
+  ]);
+}
+
+function viewMachine(key) {
+  const m = MACHINES[key];
+  if (!m) { toast('No record found'); return; }
+  viewRecord(m.full, [
+    ['Category', m.category], ['Serial Number', m.serial], ['Site', m.site],
+    ['GA1 Expiry', m.expiry], ['Status', m.status],
+  ]);
+}
+
+function viewDaywork(id) {
+  const d = DAYWORKS[id];
+  if (!d) { toast('No record found'); return; }
+  const rows = [
+    ['Client', d.client], ['Site', d.site], ['Date', d.date],
+    ['Description', d.desc], ['Hours', d.hours], ['Submitted by', d.submittedBy],
+    ['Status', d.status],
+  ];
+  if (d.signedDate) rows.push(['Signed', d.signedDate]);
+  viewRecord(id, rows);
+}
+
+function viewTimesheet(name, hours) {
+  viewRecord(name + ' — Timesheet', [
+    ['Week', '20 Jun – 26 Jun 2026'], ['Total Hours', hours],
+    ['Mon–Fri', 'See editable grid'], ['Site', 'ESB Substation, Mullingar'],
+  ]);
+}
+
+function viewToolboxTalk(topic) {
+  const t = TOOLBOX_TALKS[topic];
+  if (!t) { toast('No record found'); return; }
+  const pending = t.attendees.filter(a => !a.ack);
+  const acked = t.attendees.filter(a => a.ack);
+  let html = '<div class="detail-kv"><span class="dk">Date</span><span class="dv">' + t.date + '</span></div>';
+  html += '<div class="detail-kv"><span class="dk">Presented by</span><span class="dv">' + t.presentedBy + '</span></div>';
+  html += '<div class="detail-kv"><span class="dk">Acknowledged</span><span class="dv">' + acked.length + ' of ' + t.attendees.length + '</span></div>';
+  html += '<div style="margin-top:14px;font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--g400);text-transform:uppercase;margin-bottom:8px">Attendance</div>';
+  t.attendees.forEach(a => {
+    html += '<div class="detail-kv" style="align-items:center">';
+    html += '<span class="dk" style="width:auto;flex:1">' + a.name + '</span>';
+    html += a.ack
+      ? '<span class="bdg bdg-grn">✓ Acknowledged</span>'
+      : '<span class="bdg bdg-red">⏳ Pending</span>';
+    html += '</div>';
+  });
+  if (pending.length) {
+    html += '<div style="margin-top:14px;padding:10px 12px;background:#fee2e2;border-radius:8px;font-size:12px;color:var(--red-dk);font-weight:600">';
+    html += '⚠️ Still pending: ' + pending.map(p => p.name).join(', ');
+    pending.forEach(p => {
+      html += '<div style="margin-top:8px"><button class="ph-btn" onclick="sendReminder(\'' + p.name + '\')">Send reminder to ' + p.name + '</button></div>';
+    });
+    html += '</div>';
+  }
+  document.getElementById('view-title').textContent = 'Toolbox Talk — ' + topic;
+  document.getElementById('view-body').innerHTML = html;
+  openModal('modal-view');
+}
+
+
+function viewGeneric(title, rows) {
+  viewRecord(title, rows);
+}
+
+/* ── EDIT HELPERS (now actually pre-fill) ── */
+function editEmp(name) {
+  const e = EMPLOYEES[name] || {};
+  document.getElementById('modal-emp-title').textContent = 'Edit Employee — ' + name;
+  document.getElementById('emp-fname').value = name.split(' ')[0];
+  document.getElementById('emp-lname').value = name.split(' ')[1] || '';
+  openModal('modal-emp');
+}
+
+function editClient(key) {
+  const c = CLIENTS[key] || {};
+  document.getElementById('modal-client-title').textContent = 'Edit Client — ' + key;
+  document.getElementById('client-name').value = key;
+  document.getElementById('client-contact').value = c.contact || '';
+  document.getElementById('client-role').value = c.role || '';
+  document.getElementById('client-email').value = c.email || '';
+  document.getElementById('client-phone').value = c.phone || '';
+  document.getElementById('client-address').value = c.address || '';
+  openModal('modal-client');
+}
+
+function editMachine(key) {
+  const m = MACHINES[key] || {};
+  document.getElementById('modal-machine-title').textContent = 'Edit Machine — ' + (m.full || key);
+  document.getElementById('mach-name').value = m.full || key;
+  document.getElementById('mach-serial').value = m.serial || '';
+  document.getElementById('mach-site').value = m.site || '';
+  document.getElementById('mach-expiry').value = m.expiry || '';
+  openModal('modal-machine');
+}
+
+function editSite(key) {
+  const s = SITES[key] || {};
+  document.getElementById('modal-site-title').textContent = 'Edit Site — ' + key;
+  document.getElementById('site-name').value = key;
+  document.getElementById('site-location').value = s.location || '';
+  document.getElementById('site-start').value = s.start || '';
+  openModal('modal-site');
+}
+
+/* ── CONFIRM DELETE ── */
+function confirmDelete(type, name, rowEl) {
+  document.getElementById('confirm-type').textContent = type;
+  document.getElementById('confirm-sub').textContent = '"' + name + '" will be permanently removed. This cannot be undone.';
+  document.getElementById('confirm-delete-btn').onclick = () => {
+    closeModal('modal-confirm');
+    if (rowEl) {
+      const row = rowEl.closest('tr') || rowEl.closest('.hol-row');
+      if (row) { row.style.opacity = '0'; row.style.transition = 'opacity .25s'; setTimeout(() => row.remove(), 250); }
+    }
+    toast(type.charAt(0).toUpperCase() + type.slice(1) + ' deleted');
+  };
+  openModal('modal-confirm');
+}
+
+/* ── APPROVALS ── */
+function approveTs(btn) {
+  const row = btn.closest('tr');
+  const bdg = row.querySelector('.bdg');
+  if (bdg) { bdg.className = 'bdg bdg-grn'; bdg.textContent = 'Approved'; }
+  row.cells[row.cells.length - 1].innerHTML = '<button class="act-btn" onclick="viewTimesheet(\'' + row.cells[0].textContent + '\',\'' + row.cells[3].textContent + '\')" title="View">👁</button>';
+  toast('Timesheet approved ✓');
+}
+function approveTs2(id) {
+  const el = document.getElementById(id);
+  if (el) { el.className = 'bdg bdg-grn'; el.textContent = 'Approved'; }
+  toast('Timesheet approved ✓');
+}
+function approveHol(rowId) {
+  const row = document.getElementById(rowId);
+  row.querySelector('.bdg').className = 'bdg bdg-grn';
+  row.querySelector('.bdg').textContent = 'Approved';
+  row.querySelector('.hol-acts').remove();
+  toast('Holiday approved ✓');
+}
+function declineHol(rowId) {
+  const row = document.getElementById(rowId);
+  row.querySelector('.bdg').className = 'bdg bdg-red';
+  row.querySelector('.bdg').textContent = 'Declined';
+  row.querySelector('.hol-acts').remove();
+  toast('Holiday declined');
+}
+function approveHolRow(rowId) {
+  const row = document.getElementById(rowId);
+  row.querySelector('.bdg').className = 'bdg bdg-grn';
+  row.querySelector('.bdg').textContent = 'Approved';
+  const name = row.cells[0].textContent;
+  row.cells[6].innerHTML = '<button class="act-btn" onclick="viewGeneric(\'' + name + ' — Holiday\',[[\'Status\',\'Approved\']])" title="View">👁</button><button class="act-btn danger" onclick="confirmDelete(\'holiday request\',\'' + name + '\',this)" title="Delete">🗑</button>';
+  toast('Holiday approved ✓');
+}
+function declineHolRow(rowId) {
+  const row = document.getElementById(rowId);
+  row.querySelector('.bdg').className = 'bdg bdg-red';
+  row.querySelector('.bdg').textContent = 'Declined';
+  const name = row.cells[0].textContent;
+  row.cells[6].innerHTML = '<button class="act-btn" onclick="viewGeneric(\'' + name + ' — Holiday\',[[\'Status\',\'Declined\']])" title="View">👁</button><button class="act-btn danger" onclick="confirmDelete(\'holiday request\',\'' + name + '\',this)" title="Delete">🗑</button>';
+  toast('Holiday declined');
+}
+
+/* ── TIMESHEET DATA (for real exports) ── */
+const TIMESHEET_WEEK = {
+  weekLabel: '20 Jun 2026 – 26 Jun 2026',
+  site: 'ESB Substation, Mullingar',
+  rows: [
+    { employee:'John Murphy',  role:'Excavator Operator', mon:8, tue:8, wed:8, thu:8, fri:8, sat:0, sun:0 },
+    { employee:'Sean Byrne',   role:'Plant Operator',     mon:8, tue:8, wed:8, thu:8, fri:0, sat:0, sun:0 },
+    { employee:'Tom Kelly',    role:'Site Foreman',       mon:9, tue:9, wed:9, thu:9, fri:9, sat:0, sun:0 },
+    { employee:'Pat Doyle',    role:'Labourer',           mon:8, tue:8, wed:8, thu:8, fri:0, sat:0, sun:0 },
+    { employee:'Mick Walsh',   role:'Crane Operator',     mon:9, tue:9, wed:9, thu:9, fri:8, sat:0, sun:0 },
+  ],
+};
+
+/* ── DOWNLOADS ── */
+function downloadReport(name) {
+  let csv;
+
+  if (name.startsWith('Timesheets-Week')) {
+    csv = buildTimesheetCSV();
+  } else if (name.startsWith('Payroll')) {
+    csv = buildPayrollCSV();
+  } else if (name.startsWith('Holidays')) {
+    csv = buildHolidaysCSV();
+  } else if (name.startsWith('Dayworks')) {
+    csv = buildDayworksCSV();
+  } else if (name.startsWith('PlantGA1')) {
+    csv = buildPlantCSV();
+  } else if (name.startsWith('GA2')) {
+    csv = buildGA2CSV();
+  } else if (name.startsWith('Toolbox')) {
+    csv = buildToolboxCSV(name);
+  } else {
+    csv = 'Report,E. Lynch & Sons Civils\nGenerated,' + new Date().toLocaleDateString('en-IE') + '\nType,' + name + '\n\n"Demo export — connect real data source in production."';
+  }
+
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(a.href);
+  toast('Downloaded ' + name + '.csv ✓');
+}
+
+function buildTimesheetCSV() {
+  const days = ['mon','tue','wed','thu','fri','sat','sun'];
+  const dayLabels = ['Mon 22 Jun','Tue 23 Jun','Wed 24 Jun','Thu 25 Jun','Fri 26 Jun','Sat 27 Jun','Sun 28 Jun'];
+  let csv = 'E. Lynch & Sons Civils — Weekly Timesheet Export\n';
+  csv += 'Week,' + TIMESHEET_WEEK.weekLabel + '\n';
+  csv += 'Site,' + TIMESHEET_WEEK.site + '\n';
+  csv += 'Generated,' + new Date().toLocaleDateString('en-IE') + '\n\n';
+  csv += 'Employee,Role,Site,' + dayLabels.join(',') + ',Total Hours\n';
+  TIMESHEET_WEEK.rows.forEach(r => {
+    const total = days.reduce((sum, d) => sum + r[d], 0);
+    csv += [r.employee, r.role, TIMESHEET_WEEK.site, ...days.map(d => r[d]), total].join(',') + '\n';
+  });
+  const grandTotal = TIMESHEET_WEEK.rows.reduce((sum, r) => sum + days.reduce((s,d) => s + r[d], 0), 0);
+  csv += '\nTotal hours (all staff),' + grandTotal + '\n';
+  return csv;
+}
+
+function buildPayrollCSV() {
+  let csv = 'E. Lynch & Sons Civils — Monthly Payroll Summary\nMonth,June 2026\nGenerated,' + new Date().toLocaleDateString('en-IE') + '\n\n';
+  csv += 'Employee,Role,Site,Hours This Month,Status\n';
+  Object.keys(EMPLOYEES).forEach(name => {
+    const e = EMPLOYEES[name];
+    csv += [name, e.role, e.site, '160', e.status].join(',') + '\n';
+  });
+  return csv;
+}
+
+function buildHolidaysCSV() {
+  let csv = 'E. Lynch & Sons Civils — Holiday Leave Report (Year to Date)\nGenerated,' + new Date().toLocaleDateString('en-IE') + '\n\n';
+  csv += 'Employee,From,To,Days,Type,Status\n';
+  csv += 'John Murphy,10 Jun 2026,17 Jun 2026,6,Annual Leave,Approved\n';
+  csv += 'Sean Byrne,24 Jun 2026,28 Jun 2026,3,Annual Leave,Pending\n';
+  csv += 'Mick Walsh,14 Jul 2026,18 Jul 2026,5,Annual Leave,Pending\n';
+  csv += 'Tom Kelly,3 Mar 2026,5 Mar 2026,3,Annual Leave,Declined\n';
+  return csv;
+}
+
+function buildDayworksCSV() {
+  let csv = 'E. Lynch & Sons Civils — Dayworks Summary (June 2026)\nGenerated,' + new Date().toLocaleDateString('en-IE') + '\n\n';
+  csv += 'Docket,Client,Site,Date,Description,Hours,Submitted By,Status\n';
+  Object.keys(DAYWORKS).forEach(id => {
+    const d = DAYWORKS[id];
+    csv += [id, d.client, d.site, d.date, d.desc, d.hours, d.submittedBy, d.status].join(',') + '\n';
+  });
+  return csv;
+}
+
+function buildPlantCSV() {
+  let csv = 'E. Lynch & Sons Civils — Plant GA1 Status Report\nGenerated,' + new Date().toLocaleDateString('en-IE') + '\n\n';
+  csv += 'Machine,Category,Serial Number,Site,GA1 Expiry,Status\n';
+  Object.keys(MACHINES).forEach(key => {
+    const m = MACHINES[key];
+    csv += [m.full, m.category, m.serial, m.site, m.expiry, m.status].join(',') + '\n';
+  });
+  return csv;
+}
+
+function buildGA2CSV() {
+  let csv = 'E. Lynch & Sons Civils — GA2 Checklist Export (June 2026)\nGenerated,' + new Date().toLocaleDateString('en-IE') + '\n\n';
+  csv += 'Date,Machine,Operator,Items Completed,Photos,Signed\n';
+  csv += '20 Jun 2026,CAT 320 EX-001,John Murphy,14/14,2,Yes\n';
+  csv += '19 Jun 2026,Komatsu PC210,Sean Byrne,12/14,0,Yes\n';
+  csv += '18 Jun 2026,JCB 3CX Backhoe,Cian Flood,14/14,1,Yes\n';
+  return csv;
+}
+
+function buildToolboxCSV(name) {
+  let csv = 'E. Lynch & Sons Civils — Toolbox Talk Acknowledgements\nGenerated,' + new Date().toLocaleDateString('en-IE') + '\n\n';
+  Object.keys(TOOLBOX_TALKS).forEach(topic => {
+    const t = TOOLBOX_TALKS[topic];
+    csv += 'Topic,' + topic + '\nDate,' + t.date + '\nPresented by,' + t.presentedBy + '\n\n';
+    csv += 'Employee,Acknowledged\n';
+    t.attendees.forEach(a => { csv += a.name + ',' + (a.ack ? 'Yes' : 'No — Pending') + '\n'; });
+    csv += '\n';
+  });
+  return csv;
+}
+
+function downloadDW(docketId) {
+  const d = DAYWORKS[docketId] || {};
+  const content = 'DAYWORK DOCKET\nE. Lynch & Sons Civils\n\nDocket: ' + docketId + '\nDate: ' + (d.date||'') + '\nClient: ' + (d.client||'') + '\nSite: ' + (d.site||'') + '\nDescription: ' + (d.desc||'') + '\nHours: ' + (d.hours||'') + '\nStatus: ' + (d.status||'') + '\n\n[Demo file — real version generated server-side as PDF]';
+  const blob = new Blob([content], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = docketId + '_Daywork.txt';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(a.href);
+  toast('Downloaded ' + docketId + '_Daywork.txt ✓');
+}
+
+function copySignLink(docketId) {
+  const link = 'elynch.app/sign/' + docketId;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(link).then(() => toast('Copied: ' + link));
+  } else {
+    toast('Link: ' + link);
+  }
+}
+
+function sendReminder(name) {
+  toast('Reminder email sent to ' + name + ' ✓');
+}
+
+/* ── TOAST ── */
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+}
+</script>
+</body>
+</html>

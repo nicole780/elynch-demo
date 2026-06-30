@@ -2302,7 +2302,7 @@ body { align-items: flex-start; }
 </div>
 
   
-<div class="page" id="page-sign" style="display:none;">
+<div class="page" id="page-sign">
 <!-- ══════════════════ SIGNING PAGE ══════════════════ -->
 <div id="sign-page-sign">
   <div class="sg-header">
@@ -2490,7 +2490,7 @@ body { align-items: flex-start; }
 
 <script>
 function goPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display = ''; });
   const el = document.getElementById('page-' + name);
   if (el) el.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });

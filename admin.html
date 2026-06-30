@@ -193,6 +193,68 @@ textarea.form-control{resize:vertical;min-height:64px}
 .detail-kv:last-child{border-bottom:none}
 .dk{color:var(--g500);width:130px;flex-shrink:0}
 .dv{color:var(--g900);font-weight:600;flex:1}
+
+/* ── HAMBURGER ── */
+.ham{display:none;background:none;border:none;cursor:pointer;padding:6px;color:var(--g700)}
+.ham svg{width:22px;height:22px}
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:49}
+.mob-overlay.open{display:block}
+
+/* ── MOBILE RESPONSIVE ── */
+@media(max-width:768px){
+  body{flex-direction:column}
+
+  /* Sidebar: hidden off-screen, slides in */
+  .sb{position:fixed;left:-240px;top:0;height:100vh;z-index:50;transition:left .25s;width:240px}
+  .sb.open{left:0}
+
+  /* Topbar: show hamburger, hide tabs */
+  .ham{display:flex}
+  .topbar{padding:0 14px}
+  .top-tabs{display:none}
+  .top-right{gap:6px}
+
+  /* Page padding */
+  .page{padding:16px 14px 28px}
+
+  /* Greet bar */
+  .greet-bar{padding:16px 14px;flex-direction:column;align-items:flex-start;gap:8px}
+  .weather{align-self:flex-start}
+
+  /* Stat cards: 2 columns */
+  .stats-row{grid-template-columns:1fr 1fr;gap:10px}
+  .stat-val{font-size:26px}
+
+  /* Shortcut row: 2 columns */
+  .sc-row{grid-template-columns:1fr 1fr;gap:10px}
+  .sc-val{font-size:20px}
+
+  /* Panels: single column */
+  .panels-2,.panels-3{grid-template-columns:1fr}
+
+  /* Tables: horizontal scroll */
+  .panel{overflow-x:auto}
+  .tbl{min-width:520px}
+
+  /* Page header: stack */
+  .page-header{flex-direction:column;align-items:flex-start;gap:10px}
+
+  /* Search bar: stack */
+  .search-bar{flex-wrap:wrap}
+  .filter-sel{flex:1;min-width:120px}
+
+  /* Form rows: single column */
+  .form-row,.form-row-3{grid-template-columns:1fr}
+
+  /* Modal: full width */
+  .modal{max-width:100%;border-radius:14px 14px 0 0;position:fixed;bottom:0;left:0;right:0;max-height:85vh}
+  .modal-bg{align-items:flex-end;padding:0}
+}
+
+@media(max-width:420px){
+  .stats-row{grid-template-columns:1fr 1fr}
+  .sc-row{grid-template-columns:1fr 1fr}
+}
 </style>
 </head>
 <body>
@@ -200,7 +262,7 @@ textarea.form-control{resize:vertical;min-height:64px}
 <!-- ══ SIDEBAR ══ -->
 <aside class="sb">
   <div class="sb-logo">
-    <img src="logo.png" alt="E. Lynch &amp; Sons Civils" style="width:150px;display:block;margin-bottom:4px;mix-blend-mode:screen">
+    <img src="logo.png" alt="E. Lynch &amp; Sons Civils" style="width:136px;display:block;border-radius:8px;padding:6px 8px;background:#fff;margin-bottom:6px">
     <div class="sb-logo-s">Admin Portal</div>
   </div>
   <nav style="flex:1;padding:8px 0">
@@ -294,6 +356,9 @@ textarea.form-control{resize:vertical;min-height:64px}
 <div class="main">
   <!-- TOP BAR -->
   <div class="topbar">
+    <button class="ham" onclick="toggleSidebar()" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
     <div class="top-tabs">
       <button class="top-tab active" onclick="nav('dashboard')">Dashboard</button>
       <button class="top-tab" onclick="nav('timesheets')">Timesheets</button>
@@ -815,6 +880,9 @@ function nav(page) {
   });
   const greet = document.getElementById('greet-bar');
   greet.style.display = page === 'dashboard' ? '' : 'none';
+  // Close sidebar on mobile after nav
+  document.querySelector('.sb').classList.remove('open');
+  document.querySelector('.mob-overlay').classList.remove('open');
   window.scrollTo({ top: 0 });
 }
 
@@ -1192,6 +1260,13 @@ function toast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
 }
+
+function toggleSidebar() {
+  document.querySelector('.sb').classList.toggle('open');
+  document.querySelector('.mob-overlay').classList.toggle('open');
+}
 </script>
+
+<div class="mob-overlay" onclick="toggleSidebar()"></div>
 </body>
 </html>

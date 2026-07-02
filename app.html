@@ -1007,25 +1007,16 @@ body { align-items: flex-start; }
       <label class="form-label">Employee</label>
       <select class="form-select" id="login-employee">
         <option value="" disabled selected>Select Employee</option>
-        <option value="Kieran Moore|foreman">Kieran Moore</option>
-        <option value="Donal McKeown|foreman">Donal McKeown</option>
-        <option value="Arnis Bergins|employee">Arnis Bergins</option>
-        <option value="Gordon McConnon|employee">Gordon McConnon</option>
-        <option value="Niall Taaffe|employee">Niall Taaffe</option>
-        <option value="Wellington Ceciliano|employee">Wellington Ceciliano</option>
-        <option value="Paulo Ferreira|employee">Paulo Ferreira</option>
-        <option value="Ricardo Sousa|employee">Ricardo Sousa</option>
-        <option value="Nathan Barbosa|employee">Nathan Barbosa</option>
-        <option value="Lucas Marinho|employee">Lucas Marinho</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Role</label>
-      <select class="form-select" id="login-role">
-        <option value="" disabled selected>Select Role</option>
-        <option value="employee">Employee</option>
-        <option value="foreman">Site Foreman</option>
+        <option value="Kieran Moore">Kieran Moore</option>
+        <option value="Donal McKeown">Donal McKeown</option>
+        <option value="Arnis Bergins">Arnis Bergins</option>
+        <option value="Gordon McConnon">Gordon McConnon</option>
+        <option value="Niall Taaffe">Niall Taaffe</option>
+        <option value="Wellington Ceciliano">Wellington Ceciliano</option>
+        <option value="Paulo Ferreira">Paulo Ferreira</option>
+        <option value="Ricardo Sousa">Ricardo Sousa</option>
+        <option value="Nathan Barbosa">Nathan Barbosa</option>
+        <option value="Lucas Marinho">Lucas Marinho</option>
       </select>
     </div>
 
@@ -2407,6 +2398,20 @@ body { align-items: flex-start; }
 let currentUser = '';
 let currentRole = '';
 
+// Roles set in the admin backend — employees never see or select this
+const EMPLOYEE_ROLES = {
+  'Kieran Moore': 'foreman',
+  'Donal McKeown': 'foreman',
+  'Arnis Bergins': 'employee',
+  'Gordon McConnon': 'employee',
+  'Niall Taaffe': 'employee',
+  'Wellington Ceciliano': 'employee',
+  'Paulo Ferreira': 'employee',
+  'Ricardo Sousa': 'employee',
+  'Nathan Barbosa': 'employee',
+  'Lucas Marinho': 'employee',
+};
+
 // Attendance timesheet
 const TS_STAFF = [
   'Arnis Bergins','Gordon McConnon','Niall Taaffe','Wellington Ceciliano',
@@ -2492,13 +2497,10 @@ window.addEventListener('DOMContentLoaded', function() { tsInit(); });
 
 function doLogin() {
   const empSel = document.getElementById('login-employee');
-  const roleSel = document.getElementById('login-role');
   const val = empSel.value;
-  const role = roleSel.value;
-  if (!val || !role) { alert('Please select your name and role.'); return; }
-  const parts = val.split('|');
-  currentUser = parts[0];
-  currentRole = role;
+  if (!val) { alert('Please select your name.'); return; }
+  currentUser = val;
+  currentRole = EMPLOYEE_ROLES[val] || 'employee';
   // Update greeting
   const greetEl = document.getElementById('dash-greeting');
   const subEl = document.getElementById('dash-sub');

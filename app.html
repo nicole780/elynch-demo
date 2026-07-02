@@ -1777,12 +1777,21 @@ body { align-items: flex-start; }
   </div>
 
   <div class="screen-content">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0 6px;">
-      <div>
-        <div style="font-size:11px;color:var(--gray-400);font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Site</div>
-        <div style="font-size:13px;font-weight:700;color:var(--blue-dark);">ESB Substation, Mullingar</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0 8px;gap:10px;">
+      <div style="flex:1;">
+        <div style="font-size:11px;color:var(--gray-400);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Site</div>
+        <select id="ts-site-select" onchange="tsChangeSite()" style="width:100%;padding:7px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;font-weight:600;color:#1e293b;background:#fff;font-family:inherit;">
+          <option>DMC — Head Office</option>
+          <option>ESB Substation, Mullingar</option>
+          <option>M6 Motorway, Athlone</option>
+          <option>R148 Road, Kinnegad</option>
+          <option>Clonburris</option>
+          <option>Liffey Contracts — Lusk</option>
+          <option>Shannon Valley — Donabate</option>
+          <option>Sean Smyth — Dunboyne</option>
+        </select>
       </div>
-      <div style="text-align:right;">
+      <div style="text-align:right;flex-shrink:0;">
         <div style="font-size:11px;color:var(--gray-400);font-weight:600;text-transform:uppercase;letter-spacing:.05em;">On Site Today</div>
         <div style="font-size:20px;font-weight:800;color:var(--blue-dark);" id="ts-present-count">—</div>
       </div>
@@ -2412,20 +2421,38 @@ const EMPLOYEE_ROLES = {
   'Lucas Marinho': 'employee',
 };
 
-// Attendance timesheet
-const TS_STAFF = [
-  'Arnis Bergins','Gordon McConnon','Niall Taaffe','Wellington Ceciliano',
-  'Paulo Ferreira','Ricardo Sousa','Nathan Barbosa','Lucas Marinho'
-];
+// Attendance timesheet — staff per site (from client wage sheets)
+const TS_SITE_STAFF = {
+  'DMC — Head Office': ['Kieran Moore','Donal McKeown'],
+  'ESB Substation, Mullingar': ['Arnis Bergins','Gordon McConnon','Niall Taaffe','Wellington Ceciliano','Paulo Ferreira'],
+  'M6 Motorway, Athlone': ['Ricardo Sousa','Nathan Barbosa','Lucas Marinho','Donal McKeown'],
+  'R148 Road, Kinnegad': ['Gordon McConnon','Niall Taaffe','Ricardo Sousa'],
+  'Clonburris': ['Paulo Ferreira','Gordon McConnon','Wellington Ceciliano','Nathan Barbosa'],
+  'Liffey Contracts — Lusk': ['Arnis Bergins','Lucas Marinho','Nathan Barbosa','Wellington Ceciliano','Paulo Ferreira'],
+  'Shannon Valley — Donabate': ['Ricardo Sousa','Lucas Marinho','Nathan Barbosa'],
+  'Sean Smyth — Dunboyne': ['Donal McKeown','Kieran Moore','Gordon McConnon'],
+};
+
+function tsChangeSite() {
+  tsInit();
+}
+
+const TS_STAFF = TS_SITE_STAFF['ESB Substation, Mullingar'];
 const TS_CYCLE = ['','P','Off','H','BH'];
 const TS_COLORS = {'':'#e2e8f0','P':'#22c55e','Off':'#94a3b8','H':'#f59e0b','BH':'#6366f1'};
 const TS_TEXT = {'':'–','P':'P','Off':'Off','H':'H','BH':'BH'};
 let tsData = {}; // {name: [mon,tue,wed,thu,fri,sat,sun]}
 let tsWeekOffset = 0;
 
+function tsCurrentStaff() {
+  const sel = document.getElementById('ts-site-select');
+  const site = sel ? sel.value : 'ESB Substation, Mullingar';
+  return TS_SITE_STAFF[site] || [];
+}
+
 function tsInit() {
   tsData = {};
-  TS_STAFF.forEach(n => { tsData[n] = ['','','','','','','']; });
+  tsCurrentStaff().forEach(n => { tsData[n] = ['','','','','','','']; });
   tsBuildGrid();
   tsUpdateCount();
 }
@@ -2434,7 +2461,7 @@ function tsBuildGrid() {
   const tbody = document.getElementById('ts-tbody');
   if (!tbody) return;
   tbody.innerHTML = '';
-  TS_STAFF.forEach((name, ri) => {
+  tsCurrentStaff().forEach((name, ri) => {
     const tr = document.createElement('tr');
     const nameTd = document.createElement('td');
     nameTd.style.cssText = 'padding:4px 6px;font-weight:600;font-size:11px;color:#1e293b;white-space:nowrap;';

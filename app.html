@@ -1005,14 +1005,27 @@ body { align-items: flex-start; }
 
     <div class="form-group">
       <label class="form-label">Employee</label>
-      <select class="form-select">
+      <select class="form-select" id="login-employee">
         <option value="" disabled selected>Select Employee</option>
-        <option>John Murphy</option>
-        <option>Sean Byrne</option>
-        <option>Tom Kelly</option>
-        <option>Pat Doyle</option>
-        <option>Mick Walsh</option>
-        <option>Declan Ryan</option>
+        <option value="Kieran Moore|foreman">Kieran Moore</option>
+        <option value="Donal McKeown|foreman">Donal McKeown</option>
+        <option value="Arnis Bergins|employee">Arnis Bergins</option>
+        <option value="Gordon McConnon|employee">Gordon McConnon</option>
+        <option value="Niall Taaffe|employee">Niall Taaffe</option>
+        <option value="Wellington Ceciliano|employee">Wellington Ceciliano</option>
+        <option value="Paulo Ferreira|employee">Paulo Ferreira</option>
+        <option value="Ricardo Sousa|employee">Ricardo Sousa</option>
+        <option value="Nathan Barbosa|employee">Nathan Barbosa</option>
+        <option value="Lucas Marinho|employee">Lucas Marinho</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Role</label>
+      <select class="form-select" id="login-role">
+        <option value="" disabled selected>Select Role</option>
+        <option value="employee">Employee</option>
+        <option value="foreman">Site Foreman</option>
       </select>
     </div>
 
@@ -1022,7 +1035,7 @@ body { align-items: flex-start; }
     </div>
 
     <div style="margin-top: auto; padding-top: 16px;">
-      <a onclick="goPage('dashboard')" href="#" class="btn btn-primary">Sign In</a>
+      <a onclick="doLogin()" href="#" class="btn btn-primary">Sign In</a>
     </div>
   </div>
 </div>
@@ -1055,9 +1068,9 @@ body { align-items: flex-start; }
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       </div>
       <div>
-        <div class="user-name">Good Afternoon, E Lynch</div>
-        <div class="user-site">& Sons</div>
-        <div class="online-dot">Online</div>
+        <div class="user-name" id="dash-greeting">Good Afternoon</div>
+        <div class="user-site" id="dash-sub">Please log in</div>
+        <div class="online-dot" id="dash-role-badge" style="background:#475569;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;color:#fff;display:inline-block;">Employee</div>
       </div>
     </div>
 
@@ -1095,7 +1108,7 @@ body { align-items: flex-start; }
         <span class="menu-item-arrow">›</span>
       </a>
 
-      <a onclick="goPage('dayworks')" href="#" class="menu-item">
+      <a onclick="goPage('dayworks')" href="#" class="menu-item foreman-only" style="display:none">
         <div class="menu-item-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
         </div>
@@ -1106,7 +1119,7 @@ body { align-items: flex-start; }
         <span class="menu-item-arrow">›</span>
       </a>
 
-      <a onclick="goPage('timesheets')" href="#" class="menu-item">
+      <a onclick="goPage('timesheets')" href="#" class="menu-item foreman-only" style="display:none">
         <div class="menu-item-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
@@ -1755,165 +1768,67 @@ body { align-items: flex-start; }
 
 <div class="page" id="page-timesheets">
 <div class="phone">
-  <div class="status-bar">
+  <div class="status-bar dark">
     <span>12:46</span>
     <div class="status-icons"><span style="font-size:12px;font-weight:700;">4G</span></div>
   </div>
 
   <div class="top-bar">
     <a onclick="goPage('dashboard')" href="#" class="back-btn">‹</a>
-    <h1>Timesheets</h1>
-    <button class="action-btn">Export</button>
+    <h1>Attendance</h1>
+    <button class="action-btn" onclick="alert('Exported!')">Export</button>
   </div>
 
   <div class="week-nav">
-    <button>‹</button>
-    <span>20 Jun – 26 Jun 2026</span>
-    <button>›</button>
+    <button onclick="tsChangeWeek(-1)">‹</button>
+    <span id="ts-week-label">30 Jun – 6 Jul 2026</span>
+    <button onclick="tsChangeWeek(1)">›</button>
   </div>
 
   <div class="screen-content">
-    <div class="ts-filter-tabs">
-      <button class="ts-filter-tab active">All Staff</button>
-      <button class="ts-filter-tab">Pending</button>
-      <button class="ts-filter-tab">Approved</button>
-      <button class="ts-filter-tab">Flagged</button>
-    </div>
-
-    <div class="stats-bar">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0 6px;">
       <div>
-        <div class="ts-stat-label">Total Hours This Week</div>
-        <div class="stat-value">233h</div>
+        <div style="font-size:11px;color:var(--gray-400);font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Site</div>
+        <div style="font-size:13px;font-weight:700;color:var(--blue-dark);">ESB Substation, Mullingar</div>
       </div>
       <div style="text-align:right;">
-        <div class="ts-stat-label">Staff on Site</div>
-        <div class="stat-value">6</div>
+        <div style="font-size:11px;color:var(--gray-400);font-weight:600;text-transform:uppercase;letter-spacing:.05em;">On Site Today</div>
+        <div style="font-size:20px;font-weight:800;color:var(--blue-dark);" id="ts-present-count">—</div>
       </div>
     </div>
 
-    <div class="site-label">Site — ESB Substation, Mullingar</div>
+    <div style="font-size:10px;color:var(--gray-400);margin-bottom:8px;">Tap a cell to cycle: <span style="background:#22c55e;color:#fff;padding:1px 5px;border-radius:4px;font-weight:700;">P</span> Present &nbsp; <span style="background:#94a3b8;color:#fff;padding:1px 5px;border-radius:4px;font-weight:700;">Off</span> Day Off &nbsp; <span style="background:#f59e0b;color:#fff;padding:1px 5px;border-radius:4px;font-weight:700;">H</span> Holiday &nbsp; <span style="background:#6366f1;color:#fff;padding:1px 5px;border-radius:4px;font-weight:700;">BH</span> Bank Hol</div>
 
-    <!-- John Murphy - expanded -->
-    <div class="staff-row">
-      <div class="staff-row-ts-header" onclick="toggleExpand(this)">
-        <div>
-          <div class="staff-name">John Murphy</div>
-          <div class="staff-role">Excavator Operator</div>
-        </div>
-        <div class="staff-right">
-          <span class="staff-hours">40h this week</span>
-          <span class="badge badge-green">Approved</span>
-          <span style="color:var(--gray-400);font-size:14px;" id="arrow-0">∧</span>
-        </div>
-      </div>
-      <div class="timesheet-expand" id="expand-0">
-        <div class="day-row">
-          <div class="day-cell ts-header">Tot</div>
-          <div class="day-cell ts-header">Mon</div>
-          <div class="day-cell ts-header">Tue</div>
-          <div class="day-cell ts-header">Wed</div>
-          <div class="day-cell ts-header">Thu</div>
-          <div class="day-cell ts-header">Fri</div>
-          <div class="day-cell ts-header sat">Sat</div>
-          <div class="day-cell ts-header sun">Sun</div>
-        </div>
-        <div class="day-row">
-          <div class="day-cell" style="font-weight:700;color:var(--blue-mid);">Hrs</div>
-          <div class="day-cell"><input class="day-input" value="" placeholder="–"></div>
-          <div class="day-cell"><input class="day-input" value="" placeholder="–"></div>
-          <div class="day-cell"><input class="day-input" value="8"></div>
-          <div class="day-cell"><input class="day-input" value="8"></div>
-          <div class="day-cell"><input class="day-input" value="8"></div>
-          <div class="day-cell"><input class="day-input" value="0"></div>
-          <div class="day-cell"><input class="day-input" value="0"></div>
-        </div>
-        <div style="padding:8px 10px;background:var(--blue-dark);color:white;font-size:13px;font-weight:700;display:inline-block;border-radius:6px;margin:8px;">24h</div>
-        <div class="approval-btns" style="padding:0 10px 10px;">
-          <button class="approval-btn ts-approved">Approved</button>
-          <button class="approval-btn ts-pending">Pending</button>
-          <button class="approval-btn flagged">Flagged</button>
-        </div>
-      </div>
+    <!-- Attendance grid -->
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+      <table id="ts-grid" style="width:100%;border-collapse:separate;border-spacing:2px;font-size:11px;">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:4px 6px;font-size:10px;font-weight:700;color:var(--gray-500);white-space:nowrap;min-width:90px;">Employee</th>
+            <th style="padding:4px 3px;font-size:10px;font-weight:700;color:var(--gray-500);text-align:center;">Mon</th>
+            <th style="padding:4px 3px;font-size:10px;font-weight:700;color:var(--gray-500);text-align:center;">Tue</th>
+            <th style="padding:4px 3px;font-size:10px;font-weight:700;color:var(--gray-500);text-align:center;">Wed</th>
+            <th style="padding:4px 3px;font-size:10px;font-weight:700;color:var(--gray-500);text-align:center;">Thu</th>
+            <th style="padding:4px 3px;font-size:10px;font-weight:700;color:var(--gray-500);text-align:center;">Fri</th>
+            <th style="padding:4px 3px;font-size:10px;font-weight:700;color:#94a3b8;text-align:center;">Sat</th>
+            <th style="padding:4px 3px;font-size:10px;font-weight:700;color:#94a3b8;text-align:center;">Sun</th>
+          </tr>
+        </thead>
+        <tbody id="ts-tbody"></tbody>
+      </table>
     </div>
 
-    <!-- Other staff -->
-    <div class="staff-row">
-      <div class="staff-row-ts-header" onclick="toggleExpand(this)">
-        <div>
-          <div class="staff-name">Sean Byrne</div>
-          <div class="staff-role">Plant Operator</div>
-        </div>
-        <div class="staff-right">
-          <span class="staff-hours">32h this week</span>
-          <span class="badge badge-green">Approved</span>
-          <span style="color:var(--gray-400);font-size:14px;">∨</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="staff-row">
-      <div class="staff-row-ts-header">
-        <div>
-          <div class="staff-name">Tom Kelly</div>
-          <div class="staff-role">Site Foreman</div>
-        </div>
-        <div class="staff-right">
-          <span class="staff-hours">45h this week</span>
-          <span class="badge badge-amber">Pending</span>
-          <span style="color:var(--gray-400);font-size:14px;">∨</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="staff-row">
-      <div class="staff-row-ts-header">
-        <div>
-          <div class="staff-name">Pat Doyle</div>
-          <div class="staff-role">Labourer</div>
-        </div>
-        <div class="staff-right">
-          <span class="staff-hours">32h this week</span>
-          <span class="badge badge-red">Flagged</span>
-          <span style="color:var(--gray-400);font-size:14px;">∨</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="staff-row">
-      <div class="staff-row-ts-header">
-        <div>
-          <div class="staff-name">Mick Walsh</div>
-          <div class="staff-role">Crane Operator</div>
-        </div>
-        <div class="staff-right">
-          <span class="staff-hours">44h this week</span>
-          <span class="badge badge-amber">Pending</span>
-          <span style="color:var(--gray-400);font-size:14px;">∨</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="staff-row">
-      <div class="staff-row-ts-header">
-        <div>
-          <div class="staff-name">Declan Ryan</div>
-          <div class="staff-role">Machine Operator</div>
-        </div>
-        <div class="staff-right">
-          <span class="staff-hours">40h this week</span>
-          <span class="badge badge-green">Approved</span>
-          <span style="color:var(--gray-400);font-size:14px;">∨</span>
-        </div>
-      </div>
+    <div style="margin-top:14px;padding:10px 12px;background:#f1f5f9;border-radius:10px;font-size:11px;color:var(--gray-500);">
+      <strong style="color:var(--blue-dark);">Foreman:</strong> Tick each staff member present on site each day. Submit at end of week for payroll.
     </div>
 
     <div style="height:16px;"></div>
   </div>
 
   <div class="sticky-bottom">
-    <button class="btn btn-primary" onclick="alert('All timesheets saved!')">
+    <button class="btn btn-primary" onclick="tsSubmit()">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-      Save All Timesheets
+      Submit Attendance
     </button>
   </div>
 
@@ -2489,6 +2404,119 @@ body { align-items: flex-start; }
 </div>
 
 <script>
+let currentUser = '';
+let currentRole = '';
+
+// Attendance timesheet
+const TS_STAFF = [
+  'Arnis Bergins','Gordon McConnon','Niall Taaffe','Wellington Ceciliano',
+  'Paulo Ferreira','Ricardo Sousa','Nathan Barbosa','Lucas Marinho'
+];
+const TS_CYCLE = ['','P','Off','H','BH'];
+const TS_COLORS = {'':'#e2e8f0','P':'#22c55e','Off':'#94a3b8','H':'#f59e0b','BH':'#6366f1'};
+const TS_TEXT = {'':'–','P':'P','Off':'Off','H':'H','BH':'BH'};
+let tsData = {}; // {name: [mon,tue,wed,thu,fri,sat,sun]}
+let tsWeekOffset = 0;
+
+function tsInit() {
+  tsData = {};
+  TS_STAFF.forEach(n => { tsData[n] = ['','','','','','','']; });
+  tsBuildGrid();
+  tsUpdateCount();
+}
+
+function tsBuildGrid() {
+  const tbody = document.getElementById('ts-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  TS_STAFF.forEach((name, ri) => {
+    const tr = document.createElement('tr');
+    const nameTd = document.createElement('td');
+    nameTd.style.cssText = 'padding:4px 6px;font-weight:600;font-size:11px;color:#1e293b;white-space:nowrap;';
+    nameTd.textContent = name;
+    tr.appendChild(nameTd);
+    for (let di = 0; di < 7; di++) {
+      const td = document.createElement('td');
+      td.style.cssText = 'padding:2px;text-align:center;';
+      const btn = document.createElement('button');
+      const val = tsData[name][di];
+      btn.style.cssText = 'width:34px;height:28px;border:none;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;color:#fff;background:' + (TS_COLORS[val]||'#e2e8f0') + ';color:' + (val ? '#fff' : '#94a3b8') + ';';
+      btn.textContent = TS_TEXT[val];
+      btn.onclick = () => { tsCycleCell(name, di, btn); };
+      td.appendChild(btn);
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  });
+  tsUpdateWeekLabel();
+}
+
+function tsCycleCell(name, di, btn) {
+  const cur = tsData[name][di];
+  const idx = TS_CYCLE.indexOf(cur);
+  const next = TS_CYCLE[(idx + 1) % TS_CYCLE.length];
+  tsData[name][di] = next;
+  btn.textContent = TS_TEXT[next];
+  btn.style.background = TS_COLORS[next] || '#e2e8f0';
+  btn.style.color = next ? '#fff' : '#94a3b8';
+  tsUpdateCount();
+}
+
+function tsUpdateCount() {
+  const today = new Date().getDay(); // 0=Sun,1=Mon...
+  const todayIdx = today === 0 ? 6 : today - 1;
+  let count = 0;
+  TS_STAFF.forEach(n => { if (tsData[n][todayIdx] === 'P') count++; });
+  const el = document.getElementById('ts-present-count');
+  if (el) el.textContent = count;
+}
+
+const TS_WEEK_STARTS = ['30 Jun','7 Jul','14 Jul','21 Jul','28 Jul'];
+const TS_WEEK_ENDS =   ['6 Jul', '13 Jul','20 Jul','27 Jul','3 Aug'];
+function tsUpdateWeekLabel() {
+  const i = ((tsWeekOffset % 5) + 5) % 5;
+  const el = document.getElementById('ts-week-label');
+  if (el) el.textContent = TS_WEEK_STARTS[i] + ' – ' + TS_WEEK_ENDS[i] + ' 2026';
+}
+function tsChangeWeek(dir) {
+  tsWeekOffset += dir;
+  tsInit();
+}
+function tsSubmit() {
+  let present = 0;
+  TS_STAFF.forEach(n => { present += tsData[n].filter(v => v === 'P').length; });
+  alert('Attendance submitted!\n' + present + ' person-days recorded for this week.');
+}
+
+window.addEventListener('DOMContentLoaded', function() { tsInit(); });
+
+function doLogin() {
+  const empSel = document.getElementById('login-employee');
+  const roleSel = document.getElementById('login-role');
+  const val = empSel.value;
+  const role = roleSel.value;
+  if (!val || !role) { alert('Please select your name and role.'); return; }
+  const parts = val.split('|');
+  currentUser = parts[0];
+  currentRole = role;
+  // Update greeting
+  const greetEl = document.getElementById('dash-greeting');
+  const subEl = document.getElementById('dash-sub');
+  if (greetEl) greetEl.textContent = 'Good Afternoon, ' + currentUser.split(' ')[0];
+  if (subEl) subEl.textContent = currentRole === 'foreman' ? 'Site Foreman' : 'Employee';
+  // Role badge
+  const badgeEl = document.getElementById('dash-role-badge');
+  if (badgeEl) {
+    badgeEl.textContent = currentRole === 'foreman' ? '⭐ Site Foreman' : 'Employee';
+    badgeEl.style.background = currentRole === 'foreman' ? '#f59e0b' : '#475569';
+  }
+  // Show/hide foreman-only items
+  document.querySelectorAll('.foreman-only').forEach(el => {
+    el.style.display = currentRole === 'foreman' ? '' : 'none';
+  });
+  goPage('dashboard');
+}
+
 function goPage(name) {
   document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display = ''; });
   const el = document.getElementById('page-' + name);
